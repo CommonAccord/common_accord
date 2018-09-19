@@ -36,3 +36,12 @@ class Graph(object):
         Returns an error message or the list of tokens
         """
         pass
+
+    @staticmethod
+    def parse(json):
+        """
+        Parses the input json string
+
+        Returns the Graph representation of it
+        """
+        pass
