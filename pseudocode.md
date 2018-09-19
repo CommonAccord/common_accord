@@ -16,7 +16,7 @@ Render:
 
 Find:
 
-![find](helpers_start.jpg)
+![find](photos/helpers_start.jpg)
 
 Search:
 
