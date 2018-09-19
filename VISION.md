@@ -1,12 +1,12 @@
-Notes from our whiteboarding session:
+# Notes from our whiteboarding session:
 
-Roadmap:
+## Roadmap
 
 A tentative roadmap:
 
 ![A Tentative Roadmap][roadmap]
 
-Architecture (microservices):
+## Architecture (microservices):
 
 A rough sketch of your expected architecture. The arrows fully explain data flow during reads (rendering), but don't totally explain it during writes.
 ![coarse_architecture][c_arch]
