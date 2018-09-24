@@ -1,5 +1,5 @@
 """
-Core Redner Algorithm wrapped in the class Graph
+Core render algorithm wrapped in the class Graph
 """
 
 class Graph(object):
@@ -10,6 +10,7 @@ class Graph(object):
     def __init__(self):
         """
         Not yet implemented
+        Assuming that there's a list
         """
         pass
 
@@ -23,11 +24,14 @@ class Graph(object):
 
     def find(self, key):
         """
-        Find the input key in this graph
+        Find the best possible match in the graph for the key that
+        is being searched for.
 
-        Returns a list of tokens represented by the given key
+        If there is a tie, return the one with the highest priority.
+        Returns a list of tokens that represent the given key
         """
-        pass
+
+
 
     def search(self, depref):
         """
