@@ -1,17 +1,20 @@
 """
 Core Redner Algorithm wrapped in the class Graph
 """
+import json
 
 class Graph(object):
     """
     A Graph is a dictionary with a predefined order
     """
 
-    def __init__(self):
+    def __init__(self, refs, nonrefs):
         """
         Not yet implemented
         """
-        pass
+        self.refs = refs
+        self.nonrefs = nonrefs
+
 
     def render(self, key):
         """
@@ -19,7 +22,6 @@ class Graph(object):
 
         Returns the result of rendering the input key
         """
-        pass
 
     def find(self, key):
         """
@@ -38,10 +40,25 @@ class Graph(object):
         pass
 
     @staticmethod
-    def parse(json):
+    def parse(jstr):
         """
         Parses the input json string
+        jstr: A json string
 
         Returns the Graph representation of it
         """
-        pass
+        return _decorate_recursive(json.loads(jstr))
+
+    @staticmethod
+    def _decorate_recursive(dictionary):
+        refs = {}
+        nonrefs = {}
+        priority = 0
+        for key in dictionary:
+            value = dictionary[key]
+            if isinstance(value, dict):
+                refs[key] = (priority, _decorate_recursive(value))
+                priority += 1
+            else:
+                nonrefs[key] = value
+        return Graph(refs, nonrefs)
