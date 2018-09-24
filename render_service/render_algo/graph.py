@@ -1,5 +1,5 @@
 """
-Core Redner Algorithm wrapped in the class Graph
+Core render algorithm wrapped in the class Graph
 """
 import json
 
@@ -11,6 +11,7 @@ class Graph(object):
     def __init__(self, refs, nonrefs):
         """
         Not yet implemented
+        Assuming that there's a list
         """
         self.refs = refs
         self.nonrefs = nonrefs
@@ -22,12 +23,26 @@ class Graph(object):
 
         Returns the result of rendering the input key
         """
+        s = []
+        acc = []
+
+        s[0:0] = find(self,key) #adding stack returned by find onto s stack
+        while s:
+            t = s.pop(0)
+            if type(t) is Literal:
+                acc.append(t)
+            elif type(t) is Variable:
+                s[0:0] = find(self, key)
+
 
     def find(self, key):
         """
-        Find the input key in this graph
+        Find the best possible match of the key that
+        is being searched for in the graph.
 
-        Returns a list of tokens represented by the given key
+        If there is a tie, return the one with the highest priority.
+        Returns a list of tokens that represent the value of the found
+        key in the graph.
         """
         pass
 
