@@ -20,18 +20,28 @@ class Graph(object):
 
         Returns the result of rendering the input key
         """
-        pass
+        s = []
+        acc = []
+
+        s[0:0] = find(self,key) #adding stack returned by find onto s stack
+        while s:
+            t = s.pop(0)
+            if type(t) is Literal:
+                acc.append(t)
+            elif type(t) is Variable:
+                s[0:0] = find(self, key)
+
 
     def find(self, key):
         """
-        Find the best possible match in the graph for the key that
-        is being searched for.
+        Find the best possible match of the key that
+        is being searched for in the graph.
 
         If there is a tie, return the one with the highest priority.
-        Returns a list of tokens that represent the given key
+        Returns a list of tokens that represent the value of the found
+        key in the graph.
         """
-
-
+        pass
 
     def search(self, depref):
         """
