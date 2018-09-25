@@ -24,6 +24,7 @@ class Graph(object):
         acc = []
 
         s[0:0] = find(self,key) #adding stack returned by find onto s stack
+
         while s:
             t = s.pop(0)
             if type(t) is Literal:
@@ -31,25 +32,20 @@ class Graph(object):
             elif type(t) is Variable:
                 s[0:0] = find(self, key)
 
+        return acc
+
 
     def find(self, key):
         """
-        Find the best possible match of the key that
-        is being searched for in the graph.
+        Finds the right value for the inputed key in 2 steps:
+        1: Using regex to find the best possible string match of the key in the
+        entire graph (taking into account prefixes of course).
 
-        If there is a tie, return the one with the highest priority.
-        Returns a list of tokens that represent the value of the found
-        key in the graph.
-        """
-        pass
+        2: If there is a tie, chooses the value of the key with highest
+        priority.
 
-    def search(self, depref):
+        Returns the value of the found key as a list of tokens.
         """
-        Search for the input key in this graph
-
-        Returns an error message or the list of tokens
-        """
-        pass
 
     @staticmethod
     def parse(json):
