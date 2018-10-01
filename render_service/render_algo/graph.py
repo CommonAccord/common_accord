@@ -23,8 +23,13 @@ class Graph(object):
 
         Returns the result of rendering the input key
         """
-        s = []
-        acc = []
+        root = {'subtrees': [], 'where': []}
+
+        stack = self.find(key)
+        while stack:
+            token = stack.pop()
+            if type(token) is Literal:
+                root['subtrees'].append({'subtrees': [], 'where'})
 
         s[0:0] = find(self,key) #adding stack returned by find onto s stack
         while s:
@@ -62,18 +67,3 @@ class Graph(object):
 
         Returns the Graph representation of it
         """
-        return _decorate_recursive(json.loads(jstr))
-
-    @staticmethod
-    def _decorate_recursive(dictionary):
-        refs = {}
-        nonrefs = {}
-        priority = 0
-        for key in dictionary:
-            value = dictionary[key]
-            if isinstance(value, dict):
-                refs[key] = (priority, _decorate_recursive(value))
-                priority += 1
-            else:
-                nonrefs[key] = value
-        return Graph(refs, nonrefs)
