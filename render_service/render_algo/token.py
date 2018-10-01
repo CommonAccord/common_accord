@@ -21,3 +21,11 @@ class Variable(token):
 
     def __init__(self):
         pass
+
+class notFound(token):
+    """
+    The graph's find method will instantiate keys that are not found
+    as a notFound object
+    """
+    def __init__(self, key):
+        self.key = key
