@@ -109,20 +109,3 @@ class Graph(object):
 
         Returns the Graph representation of it
         """
-        return _decorate_recursive(json.loads(jstr))
-
-    #TODO: Rewrite
-    @staticmethod
-    def _decorate_recursive(dictionary):
-        refs = {}
-        nonrefs = {}
-        priority = 0
-        for key in dictionary:
-            value = dictionary[key]
-            if isinstance(value, dict):
-                refs[key] = (priority, _decorate_recursive(value))
-                priority += 1
-            else:
-                nonrefs[key] = value
-        return Graph(refs, nonrefs)
-    '''
