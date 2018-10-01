@@ -14,6 +14,10 @@ class Literal(token):
         pass
 
 class Variable(token):
+    """
+    Variables exist as their fully-prefixed selves. This allows
+    for a string-matching approach in graph's find method.
+    """
 
     def __init__(self):
         pass
