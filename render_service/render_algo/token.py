@@ -37,5 +37,18 @@ class Variable(token):
     for a string-matching approach in graph's find method.
     """
 
+<<<<<<< HEAD
+    def __init__(self):
+        pass
+
+class notFound(token):
+    """
+    The graph's find method will instantiate keys that are not found
+    as a notFound object
+    """
+    def __init__(self, key):
+        self.key = key
+=======
     def __init__(self, val):
         self.val = val
+>>>>>>> 039bb431253bb85131d746ccc45b5209b5c14c08

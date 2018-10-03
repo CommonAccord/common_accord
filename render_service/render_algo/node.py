@@ -18,8 +18,8 @@ class Node(object):
 
     def __init__(self, refs, nonrefs, name):
         """
-        Not yet implemented
-        Assuming that there's a list
+        Subgraphs is an object with contains a list key, graph pairs
+        dictionary is the direct keys
         """
         # list of string
         self.edges = refs
@@ -32,7 +32,7 @@ class Node(object):
     def render(self, key):
         """
         Render the input key according to this graph
-
+        Creates a tree where each node has:
         Returns the result of rendering the input key
         """
         root = {}
@@ -65,7 +65,9 @@ class Node(object):
         2: If there is a tie, chooses the value of the key with highest
         priority.
 
-        Returns the value of the found key as a list of tokens.
+        Returns Path represented as list of strings that leads there
+        the value of the found key as a list of tokens, and where it
+        was found.
         """
         # search for key in self
         # loop over children and search for key there
