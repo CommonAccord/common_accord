@@ -36,10 +36,11 @@ class Node(object):
         Returns the result of rendering the input key
         """
         root = {}
-        unfinished = [(key, root)]
+        unfinished = [([], key, root)]
         while unfinished:
-            var, tree = unfinished.pop()
-            tokens, metadata = self.find(var)
+            prefixes, var, tree = unfinished.pop()
+            tokens, metadata = self.find(prefixes, var)
+            # TODO: add error checking, i.e. what if not found
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
             accumulated = []
@@ -47,8 +48,9 @@ class Node(object):
                 if isinstance(token, int): # Literal
                     parts.append(token)
                 elif isinstance(token, str): # Variable
-                    parts.append(dict())
-                    accumulated.insert(0, (token, {}))
+                    subtree = dict()
+                    parts.append(subtree)
+                    accumulated.insert(0, (metadata["path"], token, subtree))
                 else: # If correctly implemented, this should never happen
                     raise ValueError
             unfinished += accumulated
@@ -56,7 +58,7 @@ class Node(object):
         return root
 
 
-    def find(self, key):
+    def find(self, prefixes, var):
         """
         Finds the right value for the inputed key in 2 steps:
         1: Using regex to find the best possible string match of the key in the
@@ -72,22 +74,58 @@ class Node(object):
         # search for key in self
         # loop over children and search for key there
         # len key is the length of the prefixes + self
-        for i in range(len(key)):
-            depref = key[i:]
-            v = self.search("".join(depref))
-            if v is not None:
-                return v
-            else:
-                continue
-        return None # this should be a custom error message
+        ran = range(len(prefixes) + 1)
+        cummulative = list(map(lambda i: prefixes[i:], ran))
+        for each in cummulative:
+            each.append(var)
+
+        length
+        visited = {self: set(0)}
+        stack = [(self, 0)]
+        best = None
+        standard = length
+        while stack:
+            node, level = stack.pop()
+            for i in range(level, standard):
+                tokens = node.data.get(direct[level][i], None)
+                if tokens:
+                    best = tokens, {"path": pass}
+                    standard = i
+                    # TODO: smart break
+                    break
+            for name, sub_node in reversed(node.edges):
+                for i in range(level, length):
+                    if indirect[level][i] == name:
+                        if i not in visited.setdefault(sub_node, set()):
+                            visited[sub_node].add(i)
+                            stack.append((sub_node, i))
+        return best
 
 
+        for i in ran:
+            stack = [(i, self)]
+            visited = set()
+            while stack:
+                level, node = stack.pop()
+                if node not in visited:
+                    visited.add(node)
+                    tokens = node.data.get(cummulative[level], None)
+                    if tokens:
+                        return tokens, {"path": cummulative[i:level]}
+                    for pref, sub_node in reversed(node.edges):
+                        if pref == compartments[level] && sub_node:
+                            stack.append((i + 1, sub_node))
 
+
+        return None, None # this should be a custom error message
+
+
+    '''
     def search(self, target):
         g = self
         stack = []
         visited = []
-.       stack.append({"prefixes" : [], "path" : [self.name], "node": g})
+        stack.append({"prefixes" : [], "path" : [self.name], "node": g})
         # can code in regex later... I'm not convinced of performance bump
         while stack:
             s = stack.pop()
@@ -110,6 +148,7 @@ class Node(object):
 
         # This should be an error message ("Item not found")
         return None
+    '''
 
     #TODO: Rewrite parse to fit new structure
     @staticmethod
