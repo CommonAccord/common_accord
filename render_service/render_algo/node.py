@@ -11,7 +11,7 @@ class Node(object):
 
     edges: a list of references to other documents with string associations
     data: a dictionary of local key-List<Token> pairs
-    name: name of document (also used for dfs)
+    name: name of document
     """
     # NOTE: This implementation requires python 3.6 or above because it assumes
     #       that dictionaries maintain the ordering of keys.
@@ -21,11 +21,11 @@ class Node(object):
         Subgraphs is an object with contains a list key, graph pairs
         dictionary is the direct keys
         """
-        # list of string
+        # list of string, node pairs
         self.edges = refs
-        # dict: key -> List<Tokens>
+        # dict: string -> List<Tokens>
         self.data = nonrefs
-        # name used for dfs
+        # name used for distinguishing edges with the same names
         self.name = name
 
 
@@ -35,25 +35,22 @@ class Node(object):
         Creates a tree where each node has:
         Returns the result of rendering the input key
         """
-        root = {}
+        root = dict()
         unfinished = [([], key, root)]
         while unfinished:
             prefixes, var, tree = unfinished.pop()
             tokens, metadata = self.find(prefixes, var)
-            # TODO: add error checking, i.e. what if not found
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
-            accumulated = []
-            for token in tokens:
+            for token in reversed(tokens):
                 if isinstance(token, int): # Literal
                     parts.append(token)
                 elif isinstance(token, str): # Variable
                     subtree = dict()
-                    parts.append(subtree)
-                    accumulated.insert(0, (metadata["path"], token, subtree))
+                    parts.insert(0, subtree)
+                    unfinished.append((metadata["path"], token, subtree))
                 else: # If correctly implemented, this should never happen
                     raise ValueError
-            unfinished += accumulated
         # When everything is done, return the root
         return root
 
@@ -71,53 +68,90 @@ class Node(object):
         the value of the found key as a list of tokens, and where it
         was found.
         """
-        # search for key in self
-        # loop over children and search for key there
-        # len key is the length of the prefixes + self
-        ran = range(len(prefixes) + 1)
-        cummulative = list(map(lambda i: prefixes[i:], ran))
-        for each in cummulative:
-            each.append(var)
-
-        length
+        length, indirect, direct = Node._tabulate(filter(len, prefixes), var)
         visited = {self: set(0)}
-        stack = [(self, 0)]
-        best = None
-        standard = length
+        stack = [(self, 0, [], [])]
+        standard = -1
+        best = [], "Error: not found"
         while stack:
-            node, level = stack.pop()
-            for i in range(level, standard):
+            node, level, path, names = stack.pop()
+            for i in range(length, max(level - 1, standard), -1):
                 tokens = node.data.get(direct[level][i], None)
                 if tokens:
-                    best = tokens, {"path": pass}
+                    best = tokens, {"path": path, "names": names}
                     standard = i
-                    # TODO: smart break
                     break
-            for name, sub_node in reversed(node.edges):
-                for i in range(level, length):
-                    if indirect[level][i] == name:
-                        if i not in visited.setdefault(sub_node, set()):
-                            visited[sub_node].add(i)
-                            stack.append((sub_node, i))
+            # The following shortcut could come up for a perfect match
+            # And it is important because this gurantees faster runtime than the
+            # naive approach even when there is a perfect match
+            if standard == length:
+                break
+            node._expand(level, length, indirect[level], visited, stack, path, names)
         return best
 
 
-        for i in ran:
-            stack = [(i, self)]
-            visited = set()
-            while stack:
-                level, node = stack.pop()
-                if node not in visited:
-                    visited.add(node)
-                    tokens = node.data.get(cummulative[level], None)
-                    if tokens:
-                        return tokens, {"path": cummulative[i:level]}
-                    for pref, sub_node in reversed(node.edges):
-                        if pref == compartments[level] && sub_node:
-                            stack.append((i + 1, sub_node))
+    @staticmethod
+    def _tabulate(prefixes, var):
+        """
+        This static helper basically construct tables for efficient string slicing
+
+        The end result guarantees that when we do 'indirect[i][j]', where i <= j,
+        we are getting '"".join(prefixes[i:j])' but in constant time
+
+        Likewise 'direct[i][j] == "".join(prefixes[i:j]) + var'
+        """
+        length = len(prefixes)
+        indirect = []
+        direct = []
+        for i in range(length):
+            sentinel_i = {i: ""}
+            sentinel_d = {i: var}
+            acc = ""
+            for j in range(i, length):
+                acc += prefixes[j]
+                sentinel_i[j+1] = acc
+                sentinel_d[j+1] = acc + var
+            indirect.append(sentinel_i)
+            direct.append(sentinel_d)
+        return length, indirect, direct
 
 
-        return None, None # this should be a custom error message
+    def _expand(self, level, length, pref_table, visited, stack, path, names):
+        """
+        When this helper function is called, we look at all the edges the 'self'
+        node is connected to and filter the ones that are both matching the path
+        and unvisited and the corresponding level.
+        """
+        # Go through the edges in reversed priority to guarantee that the ones
+        # with higher priority gets pushed onto the stack later
+        for edge, neighbor in reversed(self.edges):
+            name_len = len(edge)
+            low, high = level, length
+            # This while loop helps find the possible match in log(n) time
+            # because the prefix table is sorted. Theoretically, this is the
+            # best we can do without hashing, which is space inefficient and
+            # hashing isn't actually free (takes more time when string is longer)
+            #
+            # We're using this binary search algorithm because it is reasonably
+            # fast and space efficient. In reality however, this is really fast
+            # anyway that we could've done it without any optimization whatsoever,
+            # because paths are most likely really short anyway.
+            while low < high:
+                mid = (low + high) // 2
+                if name_len > len(pref_table[mid]):
+                    low = mid + 1
+                else:
+                    high = mid
+            # After the loop, we must have low == high. And because we're never
+            # excluding the possibly matching string from the low-high inclusive
+            # bounds, if a match exists, it must be right here:
+            if pref_table[low] == edge:
+                # Check if the neighbor node has been visited at this level
+                if low not in visited.setdefault(neighbor, set()):
+                    # Make sure it is mark visited for future encounters
+                    visited[neighbor].add(low)
+                    # Mark it on the stack so we can deal with it later
+                    stack.append((neighbor, low, path + [edge], names + [neighbor.name]))
 
 
     '''
