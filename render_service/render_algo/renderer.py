@@ -1,8 +1,12 @@
 import json
 import argparse
+import sys
 
 import Graph from graph
 import Token from token
+
+print('{metadata: bloop, render_tree: blorp}')
+sys.stdout.flush()
 
 parser = argparse.ArgumentParser(description="Renders a string from a graph")
 
