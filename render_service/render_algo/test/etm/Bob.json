@@ -1,15 +1,15 @@
 {
     "data": {
-        "First Name": [["Lit", "Robert"]],
-        "M.I.": [["Lit", "F."]],
-        "Last Name": [["Lit", "Mueller"]],
-        "Full Name": [["Var", "First Name"], ["Lit", " "], ["Var", "M.I."], ["Lit", " "], ["Var", "Last Name"]],
-        "Address": [["Var", "Address.FirstLine"], ["Lit", ","], ["Var", "Address.City"], ["Lit", ", "], ["Var", "State"]],
-        "Address.FirstLine": [["Lit", "13 Benefit St."]],
-        "Address.SecondLine": [["Lit", "Apt.3"]],
-        "Name_and_Address": [["Var", "Name"], ["Lit", ", "], ["Var", "Address"]],
-        "Name_and_Address.Formal": [["Var", "Full Name"], ["Lit", ", "], ["Var", "Address"]],
-        "Address.City": [["Lit", "Providence"]]
+        "First Name": ["Robert"],
+        "M.I.": ["F."],
+        "Last Name": ["Mueller"],
+        "Full Name": ["", "First Name", " ", "M.I.", " ", "Last Name"],
+        "Address": ["", "Address.FirstLine", ",", "Address.City", ", ", "State"],
+        "Address.FirstLine": ["13 Benefit St."],
+        "Address.SecondLine": ["Apt.3"],
+        "Name_and_Address": [", ", "Name", ", ", "Address"],
+        "Name_and_Address.Formal": ["", "Full Name", ", ", "Address"],
+        "Address.City": ["Providence"]
     },
     "edges": []
 }
