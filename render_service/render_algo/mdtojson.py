@@ -20,9 +20,19 @@ def getMap(map):
                 h["edges"][k]=v
             else: #add to data
                 if not k in h:
-                    h["data"][k]=v
-
+                    h["data"][k]= parseValue(v)
+                    
     return json.dumps(h)
+
+def parseValue(v):
+    """In: the value to be parsed
+    Out: a list of alternating Literals and  Variables.
+    A Literal will always be the first element in the list.
+    """
+
+    #splitting value @ curly braces
+    l = re.compile("[\\{\\}]").split(v)
+    return l
 
 if __name__ == '__main__' :
     print "testing getMap..."
