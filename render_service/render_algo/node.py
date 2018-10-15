@@ -32,8 +32,8 @@ class Node(object):
     def render(self, key):
         """
         Render the input key according to this graph
-        Creates a tree where each node has:
-        Returns the result of rendering the input key
+
+        Returns a tree with metadata
         """
         root = dict()
         unfinished = [([], key, root)]
@@ -57,16 +57,10 @@ class Node(object):
 
     def find(self, prefixes, var):
         """
-        Finds the right value for the inputed key in 2 steps:
-        1: Using regex to find the best possible string match of the key in the
-        entire graph (taking into account prefixes of course).
+        Given the prefixes and the variable, find the list of tokens associated
+        with it.
 
-        2: If there is a tie, chooses the value of the key with highest
-        priority.
-
-        Returns Path represented as list of strings that leads there
-        the value of the found key as a list of tokens, and where it
-        was found.
+        Returns a List<Token> - metadata pair, where metadata is a dictionary
         """
         length, indirect, direct = Node._tabulate(filter(len, prefixes), var)
         visited = {self: set(0)}
@@ -75,7 +69,7 @@ class Node(object):
         best = [], "Error: not found"
         while stack:
             node, level, path, names = stack.pop()
-            for i in range(length, max(level - 1, standard), -1):
+            for i in range(length, max(level-1, standard), -1):
                 tokens = node.data.get(direct[level][i], None)
                 if tokens:
                     best = tokens, {"path": path, "names": names}
