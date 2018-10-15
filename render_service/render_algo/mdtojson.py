@@ -1,14 +1,14 @@
 #!/usr/bin/python
 import json
 
-def getMap(map):
-    """Takes in a string that is the name of an .md file 
+def getMap(name):
+    """Takes in a string that is the name of an .md file
     and returns a json string
     Takes in name of file without the .md extension
     """
 
     h = { "data":{}, "edges":{} }
-    for line in open(map+".md"):
+    for line in open(name+".md"):
         line = line[0:line.find("\n")] # removing newline char
         if "=" in line and not line.endswith("="):
             keyval = line.split("=")
@@ -23,8 +23,9 @@ def getMap(map):
                     h["data"][k]=v
 
     return json.dumps(h)
-
+"""
 if __name__ == '__main__' :
     print "testing getMap..."
     print getMap("test/Easy_Test_maps/Alice")
     print "testing done"
+"""
