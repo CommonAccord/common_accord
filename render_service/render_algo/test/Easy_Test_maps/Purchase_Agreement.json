@@ -11,7 +11,7 @@
                               ["Var", "Buyer.Friend.2.Name_and_Address.Formal"],
                               ["Lit", "."]],
         "Buyer.Name": [["Lit", "Alice"]],
-        "Buyer.Friend.2.Name": [["Lit", "Bob"]]
+        "Buyer.Friend.2.Name": [["Lit", "Rob"]]
     },
-    "edges": [["Item.Book", "Moby_Dick"], ["Buyer.", "Alice"]]
+    "edges": [["Item.Book.", "Moby_Dick"], ["Buyer.", "Alice"]]
 }
