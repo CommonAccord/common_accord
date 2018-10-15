@@ -147,6 +147,25 @@ class Node(object):
                     # Mark it on the stack so we can deal with it later
                     stack.append((neighbor, low, path + [edge], names + [neighbor.name]))
 
+    def deep_equals(self, other_node):
+        '''
+        Compares nodes for equality at all levels (not just name). Used for testing.
+        '''
+        name_equals = other_node.name == self.name and other_node
+        data_equals = self.data == other_node.data
+        refs_equals = True
+
+        # enforces thing onto rendering
+        for e1, e2 in zip(self.edges, other_node.edges):
+            refs_equals = refs_equals and e1[0] == e2[0]
+            refs_equals = refs_equals and e1[1].deep_equals(e2[1])
+        
+        refs_equals = refs_equals and len(self.edges) == len(other_node.edges)
+        data_equals = self.data == other_node.data
+
+        return name_equals and data_equals and refs_equals
+
+
 
     '''
     def search(self, target):
@@ -183,7 +202,27 @@ class Node(object):
     def parse(jstr):
         """
         Parses the input json string
-        jstr: A json string
+        jstr: A json string w/ schema:
+            name: str,
+            edges: [{key: , node: }, ...]
+            data: [{key: , tokens: [str/int, str/int, ...]}]
 
         Returns the Graph representation of it
         """
+        jstr = json.loads(jstr)
+        name = jstr["name"]
+        refs = jstr["edges"]
+        nonrefs_temp = jstr["data"]
+
+        refs = []
+        for ele in refs:
+            key = ele["key"]
+            node = parse(ele["node"])
+            str_to_node.append((key, node))
+
+        nonrefs = {}
+        for ele in nonrefs_temp:
+            nonrefs[ele["key"]] = ele["tokens"]
+
+        return Node(refs, nonrefs, name)
+
