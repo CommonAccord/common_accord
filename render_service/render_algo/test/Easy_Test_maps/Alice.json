@@ -1,8 +1,8 @@
 {
     "data": {
-        "name": "Alice Waters",
-        "City": "Providence",
-        "State": "Rhode Island"
+        "name": [["Lit", "Alice Waters"]],
+        "City": [["Lit", "Providence"]],
+        "State": [["Lit", "Rhode Island"]]
     },
     "edges": ["Friend.2.", "Bob"]
 }
