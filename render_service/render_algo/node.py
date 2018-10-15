@@ -43,12 +43,12 @@ class Node(object):
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
             for token in reversed(tokens):
-                if isinstance(token, int): # Literal
-                    parts.append(token)
-                elif isinstance(token, str): # Variable
+                if token[0] == "Lit": # Literal
+                    parts.append(token[1])
+                elif token[0] == "Var": # Variable
                     subtree = dict()
                     parts.insert(0, subtree)
-                    unfinished.append((metadata["path"], token, subtree))
+                    unfinished.append((metadata["path"], token[1], subtree))
                 else: # If correctly implemented, this should never happen
                     raise ValueError
         # When everything is done, return the root
@@ -159,7 +159,7 @@ class Node(object):
         for e1, e2 in zip(self.edges, other_node.edges):
             refs_equals = refs_equals and e1[0] == e2[0]
             refs_equals = refs_equals and e1[1].deep_equals(e2[1])
-        
+
         refs_equals = refs_equals and len(self.edges) == len(other_node.edges)
         data_equals = self.data == other_node.data
 
@@ -225,4 +225,3 @@ class Node(object):
             nonrefs[ele["key"]] = ele["tokens"]
 
         return Node(refs, nonrefs, name)
-
