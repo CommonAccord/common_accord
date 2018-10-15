@@ -1,0 +1,17 @@
+{
+    "data": {
+        "Prose Description": [["Var", "Buyer.Name"],
+                              ["Lit", " bought a book for "],
+                              ["Var", "Buyer.Friend.2.Name"],
+                              ["Lit", ". <br> It was called "],
+                              ["Var", "Item.Book.Title"],
+                              ["Lit", " by "],
+                              ["Var", "Item.Book.Author"],
+                              ["Lit", ". She sent it in the mail to "],
+                              ["Var", "Buyer.Friend.2.Name_and_Address.Formal"],
+                              ["Lit", "."]],
+        "Buyer.Name": [["Lit", "Alice"]],
+        "Buyer.Friend.2.Name": [["Lit", "Bob"]]
+    },
+    "edges": [["Item.Book", "Moby_Dick"], ["Buyer.", "Alice"]]
+}
