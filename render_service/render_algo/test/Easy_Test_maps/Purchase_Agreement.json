@@ -13,5 +13,5 @@
         "Buyer.Name": [["Lit", "Alice"]],
         "Buyer.Friend.2.Name": [["Lit", "Rob"]]
     },
-    "edges": [["Item.Book", "Moby_Dick"], ["Buyer.", "Alice"]]
+    "edges": [["Item.Book.", "Moby_Dick"], ["Buyer.", "Alice"]]
 }
