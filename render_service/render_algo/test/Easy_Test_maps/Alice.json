@@ -1,6 +1,6 @@
 {
     "data": {
-        "name": [["Lit", "Alice Waters"]],
+        "Name": [["Lit", "Alice Waters"]],
         "City": [["Lit", "Providence"]],
         "State": [["Lit", "Rhode Island"]]
     },
