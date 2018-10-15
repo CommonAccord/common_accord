@@ -1,0 +1,8 @@
+{
+    "data": {
+        "name": "Alice Waters",
+        "City": "Providence",
+        "State": "Rhode Island"
+    },
+    "edges": ["Friend.2.", "Bob"]
+}
