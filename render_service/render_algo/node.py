@@ -42,15 +42,13 @@ class Node(object):
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
-            for token in reversed(tokens):
-                if token[0] == "Lit": # Literal
-                    parts.append(token[1])
-                elif token[0] == "Var": # Variable
+            for i, token in reversed(enumerate(tokens)):
+                if i % 2 == 0: # Literal
+                    parts.insert(0, token)
+                else: # Variable
                     subtree = dict()
                     parts.insert(0, subtree)
-                    unfinished.append((metadata["path"], token[1], subtree))
-                else: # If correctly implemented, this should never happen
-                    raise ValueError
+                    unfinished.append((metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
 
