@@ -32,8 +32,8 @@ class Node(object):
     def render(self, key):
         """
         Render the input key according to this graph
-        Creates a tree where each node has:
-        Returns the result of rendering the input key
+
+        Returns a tree with metadata
         """
         root = dict()
         unfinished = [([], key, root)]
@@ -42,31 +42,23 @@ class Node(object):
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
-            for token in reversed(tokens):
-                if isinstance(token, int): # Literal
-                    parts.append(token)
-                elif isinstance(token, str): # Variable
+            for i, token in reversed(enumerate(tokens)):
+                if i % 2 == 0: # Literal
+                    parts.insert(0, token)
+                else: # Variable
                     subtree = dict()
                     parts.insert(0, subtree)
                     unfinished.append((metadata["path"], token, subtree))
-                else: # If correctly implemented, this should never happen
-                    raise ValueError
         # When everything is done, return the root
         return root
 
 
     def find(self, prefixes, var):
         """
-        Finds the right value for the inputed key in 2 steps:
-        1: Using regex to find the best possible string match of the key in the
-        entire graph (taking into account prefixes of course).
+        Given the prefixes and the variable, find the list of tokens associated
+        with it.
 
-        2: If there is a tie, chooses the value of the key with highest
-        priority.
-
-        Returns Path represented as list of strings that leads there
-        the value of the found key as a list of tokens, and where it
-        was found.
+        Returns a List<Token> - metadata pair, where metadata is a dictionary
         """
         length, indirect, direct = Node._tabulate(filter(len, prefixes), var)
         visited = {self: set(0)}
@@ -75,7 +67,7 @@ class Node(object):
         best = [], "Error: not found"
         while stack:
             node, level, path, names = stack.pop()
-            for i in range(length, max(level - 1, standard), -1):
+            for i in range(length, max(level-1, standard), -1):
                 tokens = node.data.get(direct[level][i], None)
                 if tokens:
                     best = tokens, {"path": path, "names": names}
@@ -165,7 +157,7 @@ class Node(object):
         for e1, e2 in zip(self.edges, other_node.edges):
             refs_equals = refs_equals and e1[0] == e2[0]
             refs_equals = refs_equals and e1[1].deep_equals(e2[1])
-        
+
         refs_equals = refs_equals and len(self.edges) == len(other_node.edges)
         data_equals = self.data == other_node.data
 
