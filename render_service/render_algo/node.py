@@ -21,7 +21,7 @@ class Node(object):
         Subgraphs is an object with contains a list key, graph pairs
         dictionary is the direct keys
         """
-        # list of string, node pairs
+        # list of string, node tuples
         self.edges = refs
         # dict: string -> List<Tokens>
         self.data = nonrefs
@@ -232,3 +232,23 @@ class Node(object):
 
         return Node(refs, nonrefs, name)
 
+    @staticmethod
+    def parse_new(jstr):
+        jstr = json.loads(jstr)
+        root = jstr["root"]
+        graph = jstr["graph"]
+        parsed = {}
+        parsed["root"] = root
+        for k in jstr["graph"]:
+            data = {}
+            for ele in graph[k]["data"]:
+                data[ele["key"]] = ele["tokens"]
+            parsed[k] = Node([], data, k)
+        
+        for k in jstr["graph"]:
+            for e in graph[k]["edges"]:
+                key = e[0]
+                filename = e[1]
+                parsed[k].edges.append((key, parsed[filename]))
+        
+        return parsed[root]
