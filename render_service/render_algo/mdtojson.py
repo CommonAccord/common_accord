@@ -1,11 +1,15 @@
 #!/usr/bin/python
 import json
+import re
 
+def getMap(name):
+    """Takes in a string that is the name of an .md file
     and returns a json string
     Takes in name of file without the .md extension
     """
 
     h = { "data":{}, "edges":{} }
+    for line in open(name+".md"):
         line = line[0:line.find("\n")] # removing newline char
         if "=" in line and not line.endswith("="):
             keyval = line.split("=")
@@ -17,8 +21,7 @@ import json
                 h["edges"][k]=v
             else: #add to data
                 if not k in h:
-                    h["data"][k]= parseValue(v)
-                    
+                    h["data"][k]= parseValue(v)          
     return json.dumps(h)
 
 def parseValue(v):
@@ -33,4 +36,5 @@ def parseValue(v):
 
 if __name__ == '__main__' :
     print "testing getMap..."
-    print getMap("test/Easy_Test_maps/Alice")
+    print getMap("test/etm/Alice")
+    print "testing done"
