@@ -1,7 +1,11 @@
 #!/usr/bin/python
 import pytest
-from mdtojson import *
 import json
+import sys
+
+sys.path.insert(0,"..")
+from implementation.mdtojson import *
+from render_algo.node import Node
 
 def get_map_easy_maps_test():
     """This function tests the get_map
@@ -13,7 +17,11 @@ def get_map_easy_maps_test():
     assert getMap("test/etm/Moby_Dick") == json.load(open("test/etm/Moby_Dick.json"))
     assert getMap("test/etm/Purchase_Agreement") == json.load(open("test/etm/Purchase_Agreement.json"))
 
+def NDA_test():
+    jstr = md2json("Acme_Ang_NDA", "NDA")
+    rootNode = Node.parse(jstr)
 
+    
 
 def get_tests():
     """gets all the tests
