@@ -32,13 +32,14 @@ def getMap(full_path):
             line = line.rstrip("\n") # removing newline char
 
             # separating keys and values
-            if "=" in line and not line.endswith("="):
-                keyval = line.split("=")
-                k = keyval[0]
-                v = keyval[1]
+            for i, c in enumerate(line):
+                if "=" != c:
+                    continue
+                k = line[:i]
+                v = line[i+1:]
 
-                if "[" and "]" in v: # is an edge
-                    v = v[v.find("[")+1:v.find("]")] # remove brackets
+                if len(v) > 1 and v[0] == "[" and v[-1] == "]": # is an edge
+                    v = v[1:-1] # remove brackets
                     # add to edges list
                     h["edges"].append([k,v])
 
@@ -46,6 +47,7 @@ def getMap(full_path):
                     if not k in h:
                         # add to data dict
                         h["data"][k]= parseValue(v)
+                break
 
     return h
 
