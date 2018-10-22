@@ -85,7 +85,8 @@ class Node(object):
             # naive approach even when there is a perfect match
             if standard == number_of_levels:
                 break
-            node._expand(mlen, fulls, still_possible, visited, stack, path, names)
+            if still_possible:
+                node._expand(mlen, fulls, still_possible, visited, stack, path, names)
         return best
 
     """
