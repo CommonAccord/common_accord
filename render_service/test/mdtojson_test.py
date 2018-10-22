@@ -12,26 +12,28 @@ def get_map_easy_maps_test():
     function in the mdtojson on the
     set of easy maps"""
 
-    assert getMap("test/etm/Alice") == json.load(open("test/etm/Alice.json"))
-    assert getMap("test/etm/Bob") == json.load(open("test/etm/Bob.json"))
-    assert getMap("test/etm/Moby_Dick") == json.load(open("test/etm/Moby_Dick.json"))
-    assert getMap("test/etm/Purchase_Agreement") == json.load(open("test/etm/Purchase_Agreement.json"))
+    assert getMap("etm/Alice.md") == json.load(open("etm/Alice.json"))
+    assert getMap("etm/Bob.md") == json.load(open("etm/Bob.json"))
+    assert getMap("etm/Moby_Dick.md") == json.load(open("etm/Moby_Dick.json"))
+    assert getMap("etm/Purchase_Agreement.md") == json.load(open("etm/Purchase_Agreement.json"))
 
 def NDA_test():
     jstr = md2json("Acme_Ang_NDA", "NDA")
     rootNode = Node.parse(jstr)
+    tree = rootNode.render("Model.Root")
+    with open("NDA/NDA_rendered.html", 'r') as f:
+        assert f.read() == Node.flatten(tree)
 
-    
 
 def get_tests():
     """gets all the tests
     """
-    return [get_map_easy_maps_test]
+    return [get_map_easy_maps_test, NDA_test]
 
 
 if __name__ == '__main__' :
 
-    print 'Running tests...'
+    print('Running tests...')
     for test in get_tests():
         test()
-    print 'All tests passed!'
+    print('All tests passed!')
