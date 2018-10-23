@@ -44,10 +44,10 @@ class Node(object):
             parts = tree.setdefault("parts", [])
             for i, token in enumerate(reversed(tokens)):
                 if i % 2 == 0: # Literal
-                    parts.insert(0, token)
+                    parts.append(token)
                 else: # Variable
                     subtree = dict()
-                    parts.insert(0, subtree)
+                    parts.append(subtree)
                     unfinished.append((metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
@@ -62,7 +62,7 @@ class Node(object):
         """
         fulls = [""]
         for prefix in prefixes:
-            if len(prefix):
+            if prefix:
                 fulls.append(fulls[-1] + prefix)
         fulls = [full + var for full in fulls]
         number_of_levels = len(fulls)
@@ -73,7 +73,7 @@ class Node(object):
         best = ["<???>"], "Error: not found"
         while stack:
             node, mlen, possible_levels, path, names = stack.pop()
-            still_possible = [level for level in possible_levels if level > standard]
+            still_possible = [l for l in possible_levels if l > standard]
             for level in still_possible:
                 tokens = node.data.get(fulls[level][mlen:], None)
                 if tokens:
@@ -133,6 +133,7 @@ class Node(object):
             if new_possibilities:
                 stack.append((neighbor, tlen, new_possibilities, path + [edge], names + [neighbor.name]))
 
+    # TODO: short-circuit comparison?
     def deep_equals(self, other_node):
         '''
         Compares nodes for equality at all levels (not just name). Used for testing.
@@ -150,7 +151,6 @@ class Node(object):
         data_equals = self.data == other_node.data
 
         return name_equals and data_equals and refs_equals
-
 
 
     '''
@@ -183,7 +183,28 @@ class Node(object):
         return None
     '''
 
-    #TODO: Rewrite parse to fit new structure
+
+    @staticmethod
+    def flatten(tree):
+        result = ""
+        stack = [tree]
+        while stack:
+            current = stack.pop()
+            if isinstance(current, str):
+                result += current
+                continue
+            for each in current["parts"]:
+                stack.append(each)
+        return result
+
+    @staticmethod
+    def _flatten_recurs(tree):
+        if isinstance(tree, str):
+            return tree
+        else:
+            return "".join(map(Node.flatten, reversed(tree["parts"])))
+
+
     @staticmethod
     def parse(jstr):
         """
@@ -224,12 +245,6 @@ class Node(object):
 
         return parsed[root]
 
-    @staticmethod
-    def flatten(tree):
-        if isinstance(tree, str):
-            return tree
-        else:
-            return "".join(map(Node.flatten, tree["parts"]))
 
     @staticmethod
     def parse_new(jstr):
