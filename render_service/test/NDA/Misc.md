@@ -1,3 +1,5 @@
+State.Of=MISCELLANEOUS
+
 Sec=<b>{Title}</b> <ol><li>{Export.Sec}</li><li>{CREATE.Sec}</li><li>{Disclaim.Agency.Sec}</li><li>{Entire.Sec}</li><li>{Assign.Sec}</li><li>{Sever.Sec}</li><li>{Waive.Sec}</li><li>{Law.Sec}</li><li>{Counterpart.Sec}</li></ol>
 Title=Miscellaneous Provisions
 Export.Sec=<b>{Export.Title}</b><br> {Export.sec}
@@ -25,6 +27,8 @@ Law.Sec=<b>{Law.Title}</b><br> {Law.sec}
 Law.Title=Governing Law
 Law.sec=The interpretation and validity of this Agreement and the rights of the parties shall be governed by the laws of {State.Of}.
 Counterpart.Sec=<b>{Counterpart.Title}</b><br> {Counterpart.sec}
+
 Counterpart.Title=Counterparts
+
 Counterpart.sec=This Agreement may be executed in two or more counterparts, each of which will be deemed to be an original, but all of which together constitute one and the same instrument.
 Model.Root={Sec}
