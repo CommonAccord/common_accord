@@ -41,15 +41,14 @@ class Node(object):
             prefixes, var, tree = unfinished.pop()
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
-            parts = []
-            for i, token in enumerate(reversed(tokens)):
+            parts = tree.setdefault("parts", [])
+            for i, token in enumerate(tokens):
                 if i % 2 == 0: # Literal
                     parts.append(token)
                 else: # Variable
                     subtree = dict()
                     parts.append(subtree)
-                    unfinished.append((metadata["path"], token, subtree))
-            tree.setdefault("parts", parts[::-1])
+                    unfinished.insert(0, (metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
 
