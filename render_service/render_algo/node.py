@@ -89,25 +89,6 @@ class Node(object):
                 node._expand(mlen, fulls, still_possible, visited, stack, path, names)
         return best
 
-    """
-    @staticmethod
-    def _tabulate(prefixes, var):
-        length = len(prefixes)
-        indirect = []
-        direct = []
-        for i in range(length+1):
-            sentinel_i = {i: ""}
-            sentinel_d = {i: var}
-            acc = ""
-            for j in range(i, length):
-                acc += prefixes[j]
-                sentinel_i[j+1] = acc
-                sentinel_d[j+1] = acc + var
-            indirect.append(sentinel_i)
-            direct.append(sentinel_d)
-        return length, indirect, direct
-    """
-
 
     def _expand(self, mlen, fulls, possible_levels, visited, stack, path, names):
         """
@@ -151,37 +132,6 @@ class Node(object):
         data_equals = self.data == other_node.data
 
         return name_equals and data_equals and refs_equals
-
-
-    '''
-    def search(self, target):
-        g = self
-        stack = []
-        visited = []
-        stack.append({"prefixes" : [], "path" : [self.name], "node": g})
-        # can code in regex later... I'm not convinced of performance bump
-        while stack:
-            s = stack.pop()
-            if s is in visited:
-                continue
-            else:
-                visited.append(s)
-                # add prefixes to target to create final value to match
-                prefixed = "".join(s["prefixes"]) + target
-                if prefixed is in self.data:
-                    # we found what we're looking for
-                    return {"path": s["path"], "value": self.data[item]}
-                # we need to continue searching
-                # add keys in reverse so that the first one gets popped first
-                for k in self.edges.keys()[::-1]:
-                    child_to_push = {"prefixes": s["prefixes"].append(k),
-                        "path": s["path"].append(self.edges[k].name),
-                        "node": self.edges[k]}
-                    stack.append(child_to_push)
-
-        # This should be an error message ("Item not found")
-        return None
-    '''
 
 
     @staticmethod
