@@ -1,8 +1,9 @@
 import pytest
 import sys
+import json
 sys.path.insert(0, '..')
 from node import Node
-from mdtojson import getMap
+# from mdtojson import getMap
 
 def test_deepEquals():
   test1 = Node([], ("hello", ["1", "2"]), "test1")
@@ -20,7 +21,6 @@ def test_parse():
 
   assert Node.parse(test1).deep_equals(test1_node)
 
-<<<<<<< HEAD
 def test_new_parse():
   test1 = "{ \
       \"root\": \"name\", \
@@ -89,19 +89,89 @@ def test_new_parse():
   test1_node = Node([], {"hello": [{"type": "literal", "value": 1}, {
                     "type": "literal", "value": 2}, {"type": "literal", "value": "3"}]},
                     "name")
-  print(Node.parse_new(test1).name)
-  print(Node.parse_new(test1).edges)
-  print(Node.parse_new(test1).data)
-  print(test1_node.name)
-  print(test1_node.edges)
-  print(test1_node.data)
+  test3_node = {
+    "root" : "name",
+    "graph" : {
+      "name" : {
+        "edges": [["key1", "name1"], ["key2", "name2"]],
+        "data": 
+          [{
+            "key": "hello",
+            "tokens": 
+              [{
+              "type": "literal",
+              "value": 1 
+              }, { 
+                "type": "literal",
+                "value": 2 
+              }, { 
+                "type": "literal", 
+                "value": "3" 
+              }]
+          }]
+      },
+      "name1" : {
+        "edges" : [["key3", "name3"]],
+        "data": 
+          [{"key": "hello1", 
+            "tokens": [{
+              "type": "literal", 
+              "value": 1 
+            }, { 
+                "type": "literal", 
+                "value": 2 
+            }, { 
+                "type": "literal", 
+                "value": "3" 
+            }]
+          }]
+      },
+      "name2" : {
+        "edges" : [["key4", "name3"]],
+        "data" : 
+          [
+            {
+              "key" : "hello2",
+              "tokens" : [{"type" : "literal", "value" : 1}]
+            }
+          ]
+      },
+      "name3" : {
+        "edges" : [],
+        "data" :
+          [
+            {"key" : "hello3",
+            "tokens" : [{"type" : "variable", "value" : "sweeswoo"}]
+            }
+          ]
+      }
+    }
+  }
+  test3 = json.dumps(test3_node)
+  test3_node1 = Node([], {"hello": [{"type": "literal", "value": 1}, {
+      "type": "literal", "value": 2}, {"type": "literal", "value": "3"}]},
+      "name")
+  test3_node2 = Node([], {"hello1": [{"type": "literal", "value": 1}, {
+      "type": "literal", "value": 2}, {"type": "literal", "value": "3"}]},
+      "name1")
+  test3_node3 = Node([], {"hello2": [{"type": "literal", "value": 1}]},
+      "name2")
+  test3_node4 = Node([], {"hello3": [{"type": "variable", "value": "sweeswoo"}]},
+                     "name3")
+  test3_node1.edges = [("key1", test3_node2), ("key2", test3_node3)]
+  test3_node2.edges = [("key3", test3_node4)]
+  test3_node3.edges = [("key4", test3_node4)]
   assert Node.parse_new(test1).deep_equals(test1_node)
   assert Node.parse_new(test2).deep_equals(test2_node)
+  n = Node.parse_new(test3)
+  n.deep_to_string()
+  print()
+  test3_node1.deep_to_string()
+  assert Node.parse_new(test3).deep_equals(test3_node1)
+  assert False
 
-=======
 
 def test_md2dict():
     for name in map(lambda s: "etm/" + s, ["Alice", "Bob", "Moby_Dick", "Purchase_Agreement"]):
         with open(name + ".json") as jf:
             print(jf.read(), getMap(name))
->>>>>>> 92f84c3cfcaa6c92e02adf04d2a91d682761a00a
