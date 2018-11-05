@@ -36,19 +36,19 @@ class Node(object):
         Returns a tree with metadata
         """
         root = dict()
-        unfinished = [([], key, root)]
-        while unfinished:
-            prefixes, var, tree = unfinished.pop()
+        stack = [([], key, root)]
+        while stack:
+            prefixes, var, tree = stack.pop()
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
-            for i, token in enumerate(tokens):
+            for i, token in enumerate(reversed(tokens)):
                 if i % 2 == 0: # Literal
-                    parts.append(token)
+                    parts.insert(0, token)
                 else: # Variable
                     subtree = dict()
-                    parts.append(subtree)
-                    unfinished.insert(0, (metadata["path"], token, subtree))
+                    parts.insert(0, subtree)
+                    stack.append((metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
 
