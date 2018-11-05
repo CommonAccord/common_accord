@@ -149,11 +149,11 @@ class Node(object):
         '''
         Compares nodes for equality at all levels (not just name). Used for testing.
         '''
-        name_equals = other_node.name == self.name and other_node
+        name_equals = other_node.name == self.name
         data_equals = self.data == other_node.data
         refs_equals = True
 
-        # enforces thing onto rendering
+        # enforces ordering as well as equality
         for e1, e2 in zip(self.edges, other_node.edges):
             refs_equals = refs_equals and e1[0] == e2[0]
             refs_equals = refs_equals and e1[1].deep_equals(e2[1])
@@ -244,3 +244,17 @@ class Node(object):
                 parsed[k].edges.append((key, parsed[filename]))
         
         return parsed[root]
+
+    # prints the whole graph, depth first, starting at self
+    def deep_to_string(self, indent=""):
+        print(indent + "BEGIN NODE")
+        indent += "  "
+        print(indent + "name: " + self.name)
+        print(indent + "data: " + json.dumps(self.data))
+        print(indent + "edges: ")
+        for e in self.edges:
+            print(indent + "key: " + e[0])
+            print(indent + "value: ")
+            e[1].deep_to_string(indent)
+            print(indent[:-2] + "END NODE")
+    
