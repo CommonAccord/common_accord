@@ -42,12 +42,12 @@ class Node(object):
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
             parts = tree.setdefault("parts", [])
-            for i, token in reversed(enumerate(tokens)):
+            for i, token in enumerate(reversed(tokens)):
                 if i % 2 == 0: # Literal
-                    parts.insert(0, token)
+                    parts.append(token)
                 else: # Variable
                     subtree = dict()
-                    parts.insert(0, subtree)
+                    parts.append(subtree)
                     unfinished.append((metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
@@ -60,42 +60,42 @@ class Node(object):
 
         Returns a List<Token> - metadata pair, where metadata is a dictionary
         """
-        length, indirect, direct = Node._tabulate(filter(len, prefixes), var)
-        visited = {self: set(0)}
-        stack = [(self, 0, [], [])]
+        fulls = [""]
+        for prefix in prefixes:
+            if prefix:
+                fulls.append(fulls[-1] + prefix)
+        fulls = [full + var for full in fulls]
+        number_of_levels = len(fulls)
+        possible_levels = range(number_of_levels-1, -1, -1)
+        visited = {self: {0: set(possible_levels)}}
+        stack = [(self, 0, possible_levels, [], [])]
         standard = -1
-        best = [], "Error: not found"
+        best = ["<???>"], "Error: not found"
         while stack:
-            node, level, path, names = stack.pop()
-            for i in range(length, max(level-1, standard), -1):
-                tokens = node.data.get(direct[level][i], None)
+            node, mlen, possible_levels, path, names = stack.pop()
+            still_possible = [l for l in possible_levels if l > standard]
+            for level in still_possible:
+                tokens = node.data.get(fulls[level][mlen:], None)
                 if tokens:
                     best = tokens, {"path": path, "names": names}
-                    standard = i
+                    standard = level
                     break
             # The following shortcut could come up for a perfect match
             # And it is important because this gurantees faster runtime than the
             # naive approach even when there is a perfect match
-            if standard == length:
+            if standard == number_of_levels:
                 break
-            node._expand(level, length, indirect[level], visited, stack, path, names)
+            if still_possible:
+                node._expand(mlen, fulls, still_possible, visited, stack, path, names)
         return best
 
-
+    """
     @staticmethod
     def _tabulate(prefixes, var):
-        """
-        This static helper basically construct tables for efficient string slicing
-
-        The end result guarantees that when we do 'indirect[i][j]', where i <= j,
-        we are getting '"".join(prefixes[i:j])' but in constant time
-
-        Likewise 'direct[i][j] == "".join(prefixes[i:j]) + var'
-        """
         length = len(prefixes)
         indirect = []
         direct = []
-        for i in range(length):
+        for i in range(length+1):
             sentinel_i = {i: ""}
             sentinel_d = {i: var}
             acc = ""
@@ -106,9 +106,10 @@ class Node(object):
             indirect.append(sentinel_i)
             direct.append(sentinel_d)
         return length, indirect, direct
+    """
 
 
-    def _expand(self, level, length, pref_table, visited, stack, path, names):
+    def _expand(self, mlen, fulls, possible_levels, visited, stack, path, names):
         """
         When this helper function is called, we look at all the edges the 'self'
         node is connected to and filter the ones that are both matching the path
@@ -117,34 +118,22 @@ class Node(object):
         # Go through the edges in reversed priority to guarantee that the ones
         # with higher priority gets pushed onto the stack later
         for edge, neighbor in reversed(self.edges):
-            name_len = len(edge)
-            low, high = level, length
-            # This while loop helps find the possible match in log(n) time
-            # because the prefix table is sorted. Theoretically, this is the
-            # best we can do without hashing, which is space inefficient and
-            # hashing isn't actually free (takes more time when string is longer)
-            #
-            # We're using this binary search algorithm because it is reasonably
-            # fast and space efficient. In reality however, this is really fast
-            # anyway that we could've done it without any optimization whatsoever,
-            # because paths are most likely really short anyway.
-            while low < high:
-                mid = (low + high) // 2
-                if name_len > len(pref_table[mid]):
-                    low = mid + 1
-                else:
-                    high = mid
-            # After the loop, we must have low == high. And because we're never
-            # excluding the possibly matching string from the low-high inclusive
-            # bounds, if a match exists, it must be right here:
-            if pref_table[low] == edge:
-                # Check if the neighbor node has been visited at this level
-                if low not in visited.setdefault(neighbor, set()):
-                    # Make sure it is mark visited for future encounters
-                    visited[neighbor].add(low)
-                    # Mark it on the stack so we can deal with it later
-                    stack.append((neighbor, low, path + [edge], names + [neighbor.name]))
+            new_possibilities = []
+            tlen = len(edge) + mlen
+            for level in possible_levels:
+                if tlen > len(fulls[level]):
+                    break
+                if edge == fulls[level][mlen:tlen]:
+                    # Check if the neighbor node has been visited at this mlen with given level
+                    if level not in visited.setdefault(neighbor, dict()).setdefault(tlen, set()):
+                        # Make sure it is mark visited for future encounters
+                        visited[neighbor][tlen].add(level)
+                        # Mark it on the stack so we can deal with it later
+                        new_possibilities.append(level)
+            if new_possibilities:
+                stack.append((neighbor, tlen, new_possibilities, path + [edge], names + [neighbor.name]))
 
+    # TODO: short-circuit comparison?
     def deep_equals(self, other_node):
         '''
         Compares nodes for equality at all levels (not just name). Used for testing.
@@ -162,7 +151,6 @@ class Node(object):
         data_equals = self.data == other_node.data
 
         return name_equals and data_equals and refs_equals
-
 
 
     '''
@@ -195,7 +183,28 @@ class Node(object):
         return None
     '''
 
-    #TODO: Rewrite parse to fit new structure
+
+    @staticmethod
+    def flatten(tree):
+        result = ""
+        stack = [tree]
+        while stack:
+            current = stack.pop()
+            if isinstance(current, str):
+                result += current
+                continue
+            for each in current["parts"]:
+                stack.append(each)
+        return result
+
+    @staticmethod
+    def _flatten_recurs(tree):
+        if isinstance(tree, str):
+            return tree
+        else:
+            return "".join(map(Node.flatten, reversed(tree["parts"])))
+
+
     @staticmethod
     def parse(jstr):
         """
@@ -206,7 +215,6 @@ class Node(object):
             data: [{key: , tokens: [str/int, str/int, ...]}]
 
         Returns the Graph representation of it
-        """
         jstr = json.loads(jstr)
         name = jstr["name"]
         refs = jstr["edges"]
@@ -223,6 +231,20 @@ class Node(object):
             nonrefs[ele["key"]] = ele["tokens"]
 
         return Node(refs, nonrefs, name)
+        """
+        jstr = json.loads(jstr)
+        root = jstr["root"]
+        graph = jstr["graph"]
+        parsed = {}
+        for name in graph:
+            parsed[name] = Node([], graph[name]["data"], name)
+
+        for name in graph:
+            for edge in graph[name]["edges"]:
+                parsed[name].edges.append((edge[0], parsed[edge[1]]))
+
+        return parsed[root]
+
 
     @staticmethod
     def parse_new(jstr):
@@ -236,13 +258,13 @@ class Node(object):
             for ele in graph[k]["data"]:
                 data[ele["key"]] = ele["tokens"]
             parsed[k] = Node([], data, k)
-        
+
         for k in jstr["graph"]:
             for e in graph[k]["edges"]:
                 key = e[0]
                 filename = e[1]
                 parsed[k].edges.append((key, parsed[filename]))
-        
+
         return parsed[root]
 
     # prints the whole graph, depth first, starting at self
