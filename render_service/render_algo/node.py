@@ -60,37 +60,39 @@ class Node(object):
 
         Returns a List<Token> - metadata pair, where metadata is a dictionary
         """
-        fulls = [""]
+        possible_matches = [""]
         for prefix in prefixes:
             if prefix:
-                fulls.append(fulls[-1] + prefix)
-        fulls = [full + var for full in fulls]
-        number_of_levels = len(fulls)
-        possible_levels = range(number_of_levels-1, -1, -1)
+                possible_matches.append(possible_matches[-1] + prefix)
+        possible_matches = [p + var for p in possible_matches]
+
+        number_of_levels = len(possible_matches)
+        possible_levels = range(number_of_levels)[::-1]
         visited = {self: {0: set(possible_levels)}}
         stack = [(self, 0, possible_levels, [], [])]
-        standard = -1
+        best_level = -1
         best = ["{" + var + "}"], "Error: not found"
+
         while stack:
             node, mlen, possible_levels, path, names = stack.pop()
-            still_possible = [l for l in possible_levels if l > standard]
+            still_possible = [l for l in possible_levels if l > best_level]
             for level in still_possible:
-                tokens = node.data.get(fulls[level][mlen:], None)
+                tokens = node.data.get(possible_matches[level][mlen:])
                 if tokens:
                     best = tokens, {"path": path, "names": names}
-                    standard = level
+                    best_level = level
                     break
             # The following shortcut could come up for a perfect match
             # And it is important because this gurantees faster runtime than the
             # naive approach even when there is a perfect match
-            if standard == number_of_levels:
+            if best_level == number_of_levels:
                 break
             if still_possible:
-                node._expand(mlen, fulls, still_possible, visited, stack, path, names)
+                node._expand(mlen, possible_matches, still_possible, visited, stack, path, names)
         return best
 
 
-    def _expand(self, mlen, fulls, possible_levels, visited, stack, path, names):
+    def _expand(self, mlen, possible_matches, possible_levels, visited, stack, path, names):
         """
         When this helper function is called, we look at all the edges the 'self'
         node is connected to and filter the ones that are both matching the path
@@ -102,9 +104,9 @@ class Node(object):
             new_possibilities = []
             tlen = len(edge) + mlen
             for level in possible_levels:
-                if tlen > len(fulls[level]):
+                if tlen > len(possible_matches[level]):
                     break
-                if edge == fulls[level][mlen:tlen]:
+                if edge == possible_matches[level][mlen:tlen]:
                     # Check if the neighbor node has been visited at this mlen with given level
                     if level not in visited.setdefault(neighbor, dict()).setdefault(tlen, set()):
                         # Make sure it is mark visited for future encounters
