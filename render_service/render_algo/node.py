@@ -191,13 +191,11 @@ class Node(object):
         stack = [tree]
         while stack:
             current = stack.pop()
-            temp = []
             if isinstance(current, str):
                 result += current
                 continue
-            for each in current["parts"]:
-                temp.append(each)
-            stack += reversed(temp)
+            for each in reversed(current["parts"]):
+                stack.append(each)
         return result
 
 
