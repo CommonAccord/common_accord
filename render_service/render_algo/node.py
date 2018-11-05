@@ -70,7 +70,7 @@ class Node(object):
         visited = {self: {0: set(possible_levels)}}
         stack = [(self, 0, possible_levels, [], [])]
         standard = -1
-        best = ["<???>"], "Error: not found"
+        best = ["{" + var + "}"], "Error: not found"
         while stack:
             node, mlen, possible_levels, path, names = stack.pop()
             still_possible = [l for l in possible_levels if l > standard]
