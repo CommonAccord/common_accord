@@ -41,7 +41,7 @@ class Node(object):
             prefixes, var, tree = unfinished.pop()
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
-            parts = tree.setdefault("parts", [])
+            parts = []
             for i, token in enumerate(reversed(tokens)):
                 if i % 2 == 0: # Literal
                     parts.append(token)
@@ -49,6 +49,7 @@ class Node(object):
                     subtree = dict()
                     parts.append(subtree)
                     unfinished.append((metadata["path"], token, subtree))
+            tree.setdefault("parts", parts[::-1])
         # When everything is done, return the root
         return root
 
@@ -190,48 +191,18 @@ class Node(object):
         stack = [tree]
         while stack:
             current = stack.pop()
+            temp = []
             if isinstance(current, str):
                 result += current
                 continue
             for each in current["parts"]:
-                stack.append(each)
+                temp.append(each)
+            stack += reversed(temp)
         return result
-
-    @staticmethod
-    def _flatten_recurs(tree):
-        if isinstance(tree, str):
-            return tree
-        else:
-            return "".join(map(Node.flatten, reversed(tree["parts"])))
 
 
     @staticmethod
     def parse(jstr):
-        """
-        Parses the input json string
-        jstr: A json string w/ schema:
-            name: str,
-            edges: [{key: , node: }, ...]
-            data: [{key: , tokens: [str/int, str/int, ...]}]
-
-        Returns the Graph representation of it
-        jstr = json.loads(jstr)
-        name = jstr["name"]
-        refs = jstr["edges"]
-        nonrefs_temp = jstr["data"]
-
-        refs = []
-        for ele in refs:
-            key = ele["key"]
-            node = parse(ele["node"])
-            str_to_node.append((key, node))
-
-        nonrefs = {}
-        for ele in nonrefs_temp:
-            nonrefs[ele["key"]] = ele["tokens"]
-
-        return Node(refs, nonrefs, name)
-        """
         jstr = json.loads(jstr)
         root = jstr["root"]
         graph = jstr["graph"]
@@ -279,4 +250,3 @@ class Node(object):
             print(indent + "value: ")
             e[1].deep_to_string(indent)
             print(indent[:-2] + "END NODE")
-    
