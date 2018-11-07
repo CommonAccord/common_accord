@@ -89,26 +89,6 @@ class Node(object):
                 node._expand(mlen, fulls, still_possible, visited, stack, path, names)
         return best
 
-    """
-    @staticmethod
-    def _tabulate(prefixes, var):
-        length = len(prefixes)
-        indirect = []
-        direct = []
-        for i in range(length+1):
-            sentinel_i = {i: ""}
-            sentinel_d = {i: var}
-            acc = ""
-            for j in range(i, length):
-                acc += prefixes[j]
-                sentinel_i[j+1] = acc
-                sentinel_d[j+1] = acc + var
-            indirect.append(sentinel_i)
-            direct.append(sentinel_d)
-        return length, indirect, direct
-    """
-
-
     def _expand(self, mlen, fulls, possible_levels, visited, stack, path, names):
         """
         When this helper function is called, we look at all the edges the 'self'
@@ -152,38 +132,6 @@ class Node(object):
 
         return name_equals and data_equals and refs_equals
 
-
-    '''
-    def search(self, target):
-        g = self
-        stack = []
-        visited = []
-        stack.append({"prefixes" : [], "path" : [self.name], "node": g})
-        # can code in regex later... I'm not convinced of performance bump
-        while stack:
-            s = stack.pop()
-            if s is in visited:
-                continue
-            else:
-                visited.append(s)
-                # add prefixes to target to create final value to match
-                prefixed = "".join(s["prefixes"]) + target
-                if prefixed is in self.data:
-                    # we found what we're looking for
-                    return {"path": s["path"], "value": self.data[item]}
-                # we need to continue searching
-                # add keys in reverse so that the first one gets popped first
-                for k in self.edges.keys()[::-1]:
-                    child_to_push = {"prefixes": s["prefixes"].append(k),
-                        "path": s["path"].append(self.edges[k].name),
-                        "node": self.edges[k]}
-                    stack.append(child_to_push)
-
-        # This should be an error message ("Item not found")
-        return None
-    '''
-
-
     @staticmethod
     def flatten(tree):
         result = ""
@@ -215,23 +163,8 @@ class Node(object):
             data: [{key: , tokens: [str/int, str/int, ...]}]
 
         Returns the Graph representation of it
-        jstr = json.loads(jstr)
-        name = jstr["name"]
-        refs = jstr["edges"]
-        nonrefs_temp = jstr["data"]
-
-        refs = []
-        for ele in refs:
-            key = ele["key"]
-            node = parse(ele["node"])
-            str_to_node.append((key, node))
-
-        nonrefs = {}
-        for ele in nonrefs_temp:
-            nonrefs[ele["key"]] = ele["tokens"]
-
-        return Node(refs, nonrefs, name)
         """
+
         jstr = json.loads(jstr)
         root = jstr["root"]
         graph = jstr["graph"]
@@ -242,28 +175,6 @@ class Node(object):
         for name in graph:
             for edge in graph[name]["edges"]:
                 parsed[name].edges.append((edge[0], parsed[edge[1]]))
-
-        return parsed[root]
-
-
-    @staticmethod
-    def parse_new(jstr):
-        jstr = json.loads(jstr)
-        root = jstr["root"]
-        graph = jstr["graph"]
-        parsed = {}
-        parsed["root"] = root
-        for k in jstr["graph"]:
-            data = {}
-            for ele in graph[k]["data"]:
-                data[ele["key"]] = ele["tokens"]
-            parsed[k] = Node([], data, k)
-
-        for k in jstr["graph"]:
-            for e in graph[k]["edges"]:
-                key = e[0]
-                filename = e[1]
-                parsed[k].edges.append((key, parsed[filename]))
 
         return parsed[root]
 
