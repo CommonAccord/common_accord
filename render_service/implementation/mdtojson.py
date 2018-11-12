@@ -4,7 +4,7 @@ import re
 
 def m2j(name, directory):
     """
-    md2json with fewer function calls, which means better performance ??
+    for hotwiring the old application
     """
     graph = dict()
     jdict = {"root": name, "graph": graph}
@@ -13,7 +13,7 @@ def m2j(name, directory):
         current = unfinished.pop()
         if current not in graph:
             graph[current] = {"data": {}, "edges": []}
-            with open(directory + "/" + current + ".md") as f:
+            with open(directory + "/" + current) as f:
                 for line in f:
                     line = line.rstrip("\n")
                     for i, c in enumerate(line):
