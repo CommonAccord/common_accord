@@ -1,5 +1,5 @@
 import sys
-from implementation.mdtojson import md2json
+from ..implementation.mdtojson import md2json
 from render_algo.node import Node
 
 if __name__ == "__main__":
