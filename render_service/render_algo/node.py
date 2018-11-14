@@ -16,15 +16,15 @@ class Node(object):
     # NOTE: This implementation requires python 3.6 or above because it assumes
     #       that dictionaries maintain the ordering of keys.
 
-    def __init__(self, refs, nonrefs, name):
+    def __init__(self, edges, data, name):
         """
         Subgraphs is an object with contains a list key, graph pairs
         dictionary is the direct keys
         """
         # list of string, node tuples
-        self.edges = refs
+        self.edges = edges
         # dict: string -> List<Tokens>
-        self.data = nonrefs
+        self.data = data
         # name used for distinguishing edges with the same names
         self.name = name
 
@@ -41,13 +41,11 @@ class Node(object):
             prefixes, var, tree = stack.pop()
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
-            parts = tree.setdefault("parts", [])
+            parts = tree.setdefault("children", [])
             for i, token in enumerate(reversed(tokens)):
-                if i % 2 == 0: # Literal
-                    parts.insert(0, token)
-                else: # Variable
-                    subtree = dict()
-                    parts.insert(0, subtree)
+                subtree = {"text": token}
+                parts.insert(0, subtree)
+                if i % 2: # Variable
                     stack.append((metadata["path"], token, subtree))
         # When everything is done, return the root
         return root
@@ -141,10 +139,10 @@ class Node(object):
         stack = [tree]
         while stack:
             current = stack.pop()
-            if isinstance(current, str):
-                result += current
+            if "metadata" not in current:
+                result += current["text"]
                 continue
-            for each in reversed(current["parts"]):
+            for each in reversed(current["children"]):
                 stack.append(each)
         return result
 
