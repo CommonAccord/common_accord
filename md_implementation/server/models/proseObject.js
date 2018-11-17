@@ -8,7 +8,7 @@ let ProseObjectSchema = new mongoose.Schema({
   name: String,
   // Edges, an array of tuples [(key, proseObjectId), ...]
   edges: [{
-    key: String,
+    prefix: String,
     proseObjectId: objectId
   }],
   // Data, a json array of type [{key: , tokens: [str/int, str/int, ...]}]

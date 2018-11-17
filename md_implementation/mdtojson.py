@@ -1,34 +1,44 @@
 #!/usr/bin/python
 import json
 import re
+import pprint
 
 def m2j(name, directory):
     """
+    In: A string for the name of the a root file and 
+    another for the directory where it is found
+
+    Out: 
+
     md2json with fewer function calls, which means better performance ??
     """
     graph = dict()
-    jdict = {"root": name, "graph": graph}
-    unfinished = [name]
-    while unfinished:
-        current = unfinished.pop()
+    stack = [name]
+
+    while stack:
+        current = stack.pop()
         if current not in graph:
-            graph[current] = {"data": {}, "edges": []}
+            graph[current] = {"name": current, "edges": [], "data": {}}
+            
             with open(directory + "/" + current + ".md") as f:
                 for line in f:
                     line = line.rstrip("\n")
-                    for i, c in enumerate(line):
+
+                    for i, c in enumerate(line): #splitting by equals sign
                         if "=" == c:
                             k = line[:i]
                             v = line[i+1:]
-                            if v and v[0] == "[" and v[-1] == "]":
-                                graph[current]["edges"].append([k, v[1:-1]])
-                            else:
+                            # line could be a reference to another file
+                            if v and v[0] == "[" and v[-1] == "]": 
+                                graph[current]["edges"].append({"prefix": k , "objectId": v[1:-1]})
+                            else: # if not must be key, value pair so add to data
                                 graph[current]["data"].setdefault(k, re.compile("[\\{\\}]").split(v))
                             break
-            for edge, neighbor in graph[current]["edges"]:
-                unfinished.append(neighbor)
-    return json.dumps(jdict)
 
+            for edge in graph[current]["edges"]:
+                stack.append(edge["objectId"])
+                
+    return json.dumps(graph)
 
 def md2json(name, directory):
     """
@@ -89,3 +99,8 @@ def parseValue(v):
     #splitting value @ curly braces
     l = re.compile("[\\{\\}]").split(v)
     return l
+
+if __name__ == '__main__' :
+
+    pp = pprint.PrettyPrinter(indent=4) #prints data structures nicely
+    print(m2j("Purchase_Agreement", "test/etm"))
