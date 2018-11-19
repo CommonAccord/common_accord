@@ -37,8 +37,13 @@ def m2j(name, directory):
 
             for edge in graph[current]["edges"]:
                 stack.append(edge["objectId"])
+
+    for name, node in graph.items():
+        for edge in node["edges"]:
+            print("searching for", edge["objectId"],"dict in graph")
+            edge["objectId"] = id(graph[edge["objectId"]])
                 
-    return json.dumps(graph)
+    print(json.dumps(graph))
 
 def md2json(name, directory):
     """
@@ -101,6 +106,4 @@ def parseValue(v):
     return l
 
 if __name__ == '__main__' :
-
-    pp = pprint.PrettyPrinter(indent=4) #prints data structures nicely
     print(m2j("Purchase_Agreement", "test/etm"))
