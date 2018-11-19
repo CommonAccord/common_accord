@@ -40,7 +40,6 @@ def m2j(name, directory):
 
     for name, node in graph.items():
         for edge in node["edges"]:
-            print("searching for", edge["objectId"],"dict in graph")
             edge["objectId"] = id(graph[edge["objectId"]])
                 
     print(json.dumps(graph))
