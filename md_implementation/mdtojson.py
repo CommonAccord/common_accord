@@ -2,7 +2,10 @@
 import json
 import re
 import pprint
+import sys
+from render_algo.node import Node
 
+# This file is now mostly md to database
 def m2j(name, directory):
     """
     In: A string for the name of the a root file and
@@ -42,7 +45,7 @@ def m2j(name, directory):
         for edge in node["edges"]:
             edge["objectId"] = id(graph[edge["objectId"]])
 
-    print(json.dumps(graph))
+    return json.dumps(graph)
 
 def md2json(name, directory):
     """
@@ -105,4 +108,4 @@ def parseValue(v):
     return l
 
 if __name__ == '__main__' :
-    print(m2j("Purchase_Agreement", "test/etm"))
+    print(m2j(sys.argv[1], sys.argv[2]))
