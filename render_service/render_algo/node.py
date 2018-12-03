@@ -35,18 +35,20 @@ class Node(object):
 
         Returns a tree with metadata
         """
-        root = dict()
+        root = {"text": "{" + key + "}"}
         stack = [([], key, root)]
         while stack:
             prefixes, var, tree = stack.pop()
             tokens, metadata = self.find(prefixes, var)
             tree["metadata"] = metadata
-            parts = tree.setdefault("children", [])
-            for i, token in enumerate(reversed(tokens)):
-                subtree = {"text": token}
-                parts.insert(0, subtree)
-                if i % 2: # Variable
-                    stack.append((metadata["path"], token, subtree))
+            if tokens:
+                parts = tree.setdefault("children", [])
+                for i, token in enumerate(reversed(tokens)):
+                    subtree = {"text": token}
+                    parts.insert(0, subtree)
+                    if i % 2: # Variable
+                        stack.append((metadata["path"], token, subtree))
+                        subtree["text"] = "{" + subtree["text"] + "}"
         # When everything is done, return the root
         return root
 
@@ -69,7 +71,7 @@ class Node(object):
         visited = {self: {0: set(possible_levels)}}
         stack = [(self, 0, possible_levels, [], [])]
         best_level = -1
-        best = ["{" + var + "}"], "Error: not found"
+        best = None, "Error: not found"
 
         while stack:
             node, mlen, possible_levels, path, names = stack.pop()

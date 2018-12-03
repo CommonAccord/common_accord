@@ -9,9 +9,10 @@ def main(argv):
 
     What's returned is the rendered tree with the following structure
 
-    Tree = {metadata: {path: [edge path to where found], names: [vertex path ... ]},
-            children: A list of Trees
-            text: The variable name that resides originally}
+    Tree = {text: The variable name that resides originally in bracket, or just
+                    a plain text for a literal
+            metadata: {path: [edge path to where found], names: [vertex path ... ]},
+            children: A list of Trees}
     """
     root_node = Node.parse(" ".join(argv[1:]))
     tree = root_node.render(argv[0])
