@@ -8,7 +8,7 @@ class TextSpan extends Component{
 
         this.state = {
             expanded:true,
-            editable:true
+            editable:false
         }
     }
 
@@ -22,27 +22,36 @@ class TextSpan extends Component{
 
     renderChildren(){
 
-        if(this.props.docTree.children){
 
-            const children = this.props.docTree.children.map( child => {
+        const children = this.props.docTree.children.map( child => {
 
-                return <TextSpan docTree={child}/> 
+            if(child.children){ //if the child has children
 
-            });
+                return <TextSpan docTree={child}/>;
 
-            return children
+            }
+            return <span dangerouslySetInnerHTML={{ __html: child.text }} /> ;
 
-        }else{
-            return (this.props.docTree.text)
-        }
+
+        });
+
+        return children
     }
 
-    
+
+    /*
+    Manages what happens to the span when it is double clicked
+    */
+    onDblClick = (event) => {
+        this.setState({editable: true})
+    }
+
+
     render(){
         return (
 
             <span title={this.props.docTree.text} id={this.props.docTree.text}
-            contentEditable={this.state.editable}>
+            contentEditable={this.state.editable} onDoubleClick={this.onDblClick} >
 
                 {this.renderChildren()}
 
