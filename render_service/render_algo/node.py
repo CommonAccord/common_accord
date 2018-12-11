@@ -47,7 +47,7 @@ class Node(object):
                 parts.insert(0, subtree)
                 if i % 2: # Variable
                     stack.append((metadata["path"], token, subtree))
-                    subtree["text"] = "{" + subtree["text"] + "}"
+                    # subtree["text"] = "{" + subtree["text"] + "}"
         # When everything is done, return the root
         return root
 
