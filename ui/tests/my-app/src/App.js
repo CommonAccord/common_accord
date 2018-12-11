@@ -151,10 +151,8 @@ class App extends React.Component {
     
     return(
 
-      <div className= 'mainPage'>
-      <TextSpan docTree={docTree} />
-
-
+      <div>
+      <TextSpan docTree={docTree}/>
       </div>
 
       )
