@@ -152,7 +152,7 @@ class App extends React.Component {
     return(
 
       <div>
-      <TextSpan docTree={docTree} />
+      <TextSpan docTree={docTree} ref={docTree.text}/>
       </div>
 
       )
