@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-
+import Literal from './Literal'
+import ReactDOM from 'react-dom';
 
 class TextSpan extends Component{
 
@@ -8,10 +9,17 @@ class TextSpan extends Component{
 
         this.state = {
             expanded:true,
-            editable:true
+            editable:false
         }
     }
 
+    handleClick = (e) => {
+        // toggle the state of thi component
+        this.setState({
+            editable: !this.state.editable,
+            expanded: !this.state.expanded
+        });
+    }
 
     /*
     This function recursively renders the right amount of children if 
@@ -20,34 +28,44 @@ class TextSpan extends Component{
     that can be rendered as html.
      */
 
-    renderChildren(){
-
+    renderChildren() {
+        
         if(this.props.docTree.children){
-
+            
             const children = this.props.docTree.children.map( child => {
-
-                return <TextSpan docTree={child}/> 
-
+                if (child.children) {
+                    return <TextSpan docTree={child} ref={child.text}/> 
+                } else {
+                    return <Literal text={child.text} clickHandler={this.handleClick}
+                        editable={this.state.editable} />
+                }
             });
 
             return children
-
-        }else{
+        } else {
             return (this.props.docTree.text)
         }
     }
 
-    
+
     render(){
-        return (
+        if (this.state.expanded) {
+            return (
+                <span title={this.props.docTree.text} id={this.props.docTree.text}
+                contentEditable={this.state.editable}>
 
-            <span title={this.props.docTree.text} id={this.props.docTree.text}
-            contentEditable={this.state.editable}>
+                    {this.renderChildren()}
 
-                {this.renderChildren()}
-
-            </span>
-        );
+                </span>
+            );
+        } else {
+            return (
+                <span title={this.props.docTree.text} id={this.props.docTree.text}
+                contentEditable={this.state.editable} onDoubleClick={this.handleClick}> 
+                {this.props.docTree.text}
+                </span>
+            );
+        }
 
         }
         

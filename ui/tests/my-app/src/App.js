@@ -1,140 +1,140 @@
 import React from 'react'
 import TextSpan from './vanilla/TextSpan.jsx'
 
-const docTree = {text: "Prose Description", 
+const docTree = {text: 'Prose Description', 
   metadata: {path: [], names: []}, children: [
     
 
-    {text: ""}, 
+    {text: ''}, 
     
-    {text: "Buyer.Name", 
+    {text: 'Buyer.Name', 
     metadata: {path: [], names: []}, 
     children: [
                    
-      {text: "Alice"}
+      {text: 'Alice'}
 
     ]},
     
-    {text: " bought a book for "},
+    {text: ' bought a book for '},
     
-    {text: "Buyer.Friend.2.Name", 
+    {text: 'Buyer.Friend.2.Name', 
     metadata: {path: [], names: []}, 
     children: [
       
-      {text: "Rob"}
+      {text: 'Rob'}
     
     ]},
     
-    {text: ". <br> It was called "},
+    {text: '. <br> It was called '},
     
     
-    {text: "Item.Book.Title", 
-    metadata: {path: ["Item.Book."], names: ["Moby_Dick"]}, 
+    {text: 'Item.Book.Title', 
+    metadata: {path: ['Item.Book.'], names: ['Moby_Dick']}, 
     children: [
       
-      {text: "Moby Dick"}
+      {text: 'Moby Dick'}
     
     ]},
     
-    {text: " by "},
+    {text: ' by '},
     
-    {text: "Item.Book.Author",
-    metadata: {path: ["Item.Book."], names: ["Moby_Dick"]},
+    {text: 'Item.Book.Author',
+    metadata: {path: ['Item.Book.'], names: ['Moby_Dick']},
     children: [
       
-      {text: "Herman Melville"}
+      {text: 'Herman Melville'}
     
     ]}, 
     
-    {text: ". She sent it in the mail to "},
+    {text: '. She sent it in the mail to '},
     
-    {text: "Buyer.Friend.2.Name_and_Address.Formal", 
-    metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]},
+    {text: 'Buyer.Friend.2.Name_and_Address.Formal', 
+    metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']},
     children: [
       
-      {text: ""},
+      {text: ''},
       
-      {text: "Full Name", 
-      metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]}, 
+      {text: 'Full Name', 
+      metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']}, 
       children: [
         
-        {text: ""},
+        {text: ''},
 
-        {text: "First Name", 
-        metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]},
+        {text: 'First Name', 
+        metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']},
         children: [
           
-          {text: "Robert"}
+          {text: 'Robert'}
         ]}, 
         
-        {text: " "},
+        {text: ' '},
         
-        {text: "M.I.", 
-        metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]}, 
+        {text: 'M.I.', 
+        metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']}, 
         children: [
 
-          {text: "F."}
+          {text: 'F.'}
         
         ]}, 
         
-        {text: " "},
+        {text: ' '},
         
-        {text: "Last Name",
-        metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]},
+        {text: 'Last Name',
+        metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']},
         children: [
           
-          {text: "Mueller"}
+          {text: 'Mueller'}
         ]},
         
-        {text: ""}
+        {text: ''}
       
       ]}, 
       
-      {text: ", "},
+      {text: ', '},
       
-      {text: "Address",
-      metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]},
+      {text: 'Address',
+      metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']},
       children: [
         
-        {text: ""}, 
+        {text: ''}, 
 
-        {text: "Address.FirstLine",
-        metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]},
+        {text: 'Address.FirstLine',
+        metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']},
         children: [
           
-          {text: "13 Benefit St."}
+          {text: '13 Benefit St.'}
         
         ]}, 
         
-        {text: ","},
+        {text: ','},
         
-        {text: "Address.City", 
-        metadata: {path: ["Buyer.", "Friend.2."], names: ["Alice", "Bob"]}, 
+        {text: 'Address.City', 
+        metadata: {path: ['Buyer.', 'Friend.2.'], names: ['Alice', 'Bob']}, 
         children: [
           
-          {text: "Providence"}
+          {text: 'Providence'}
         
         ]}, 
         
-        {text: ", "},
+        {text: ', '},
         
-        {text: "State", 
-        metadata: {path: ["Buyer."], names: ["Alice"]}, 
+        {text: 'State', 
+        metadata: {path: ['Buyer.'], names: ['Alice']}, 
         children: [
           
-          {text: "Rhode Island"}
+          {text: 'Rhode Island'}
         
         ]}, 
         
-        {text: ""}
+        {text: ''}
       
       ]}, 
       
-      {text: ""}
+      {text: ''}
     
     ]}, 
     
-    {text: "."}
+    {text: '.'}
   
   ]}
 
@@ -152,7 +152,7 @@ class App extends React.Component {
     return(
 
       <div>
-      <TextSpan docTree={docTree} />
+      <TextSpan docTree={docTree}/>
       </div>
 
       )
