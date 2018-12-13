@@ -1,8 +1,4 @@
-"""
-Core render algorithm wrapped in the class Graph
-"""
 import json
-# import RenderTree from render_tree
 
 class Node(object):
     """
@@ -45,9 +41,8 @@ class Node(object):
             for i, token in enumerate(reversed(tokens)):
                 subtree = {"text": token}
                 parts.insert(0, subtree)
-                if i % 2: # Variable
+                if i % 2: # Variable (we know because alternation always starts with a literal)
                     stack.append((metadata["path"], token, subtree))
-                    # subtree["text"] = "{" + subtree["text"] + "}"
         # When everything is done, return the root
         return root
 
