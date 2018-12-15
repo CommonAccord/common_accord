@@ -26,7 +26,7 @@ def md2json(name, directory):
     while unfinished:
         current = unfinished.pop()
         if current not in graph:
-            graph[current] = {"data": {}, "edges": []}
+            graph[current] = {"data": {}, "edges": [], "id": current}
             with open(directory + "/" + current + ".md") as f:
                 for line in f:
                     line = line.rstrip("\n")

@@ -160,7 +160,7 @@ class Node(object):
         graph = jstr["graph"]
         parsed = {}
         for name in graph:
-            parsed[name] = Node([], graph[name]["data"], graph[name]["name"])
+            parsed[name] = Node([], graph[name]["data"], graph[name]["id"])
 
         for name in graph:
             for edge in graph[name]["edges"]:
