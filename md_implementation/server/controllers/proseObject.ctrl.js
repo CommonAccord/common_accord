@@ -1,5 +1,7 @@
 let mongoose = require('mongoose');
-let ProseObjectModel = require('../models/proseObject')
+let url = require('url');
+let request = require('request-promise');
+let ProseObjectModel = require('../models/proseObject.js');
 
 /*
   GET /objects - route to retrieve all objects. They will be structured like a
@@ -10,7 +12,7 @@ let ProseObjectModel = require('../models/proseObject')
 */
 
 function getObjects(req, res) {
-  let query = proseObjectModel.find({}, "name parents");
+  let query = ProseObjectModel.find({}, "name parents");
   query.exec((err, objects) => {
     if (err) res.send(err)
     res.json(objects)
@@ -33,7 +35,7 @@ function getObjectId(req, res) {
     // initialize the lwGraph
     lwGraph = {
       "root": req.body.id,
-      "graph": []
+      "graph": {}
     };
     // push each edge onto the stack
     stack = []
@@ -44,19 +46,20 @@ function getObjectId(req, res) {
       cur = stack.pop()
       // if we've already stored the node, continue looping
       if (seen.includes(cur)) continue;
-      
+      // else, add cur to seen
       seen[cur] = true;
-      ProseObjectModel.find({id: cur}).exec((err, object) => {
+      // NOTE: MAKE SURE EDGES IDENTIFIER AND OBJECT.ID=KEY MATCH
+      ProseObjectModel.find({_id: cur}).exec((err, object) => {
         if (err) res.send(err);
-
         let parsedObject = {
-          id: object.id,
-          name: object.name,
+          // id: object.id,
+          id: object.name,
           edges: object.edges,
-          data: object.data,
-          parent: object.parent
+          data: object.data//,
+          // parent: object.parent
         };
-        lwGraph.graph.push(parsedObject);
+        // map the id to the object
+        lwGraph.graph[object.id] = parsedObject
         // push all of the object's edges onto the stack
         for (i = 0; i < object.edges.length; i++) {
           stack.push(object.edges[i]["proseObjectId"])
@@ -64,10 +67,30 @@ function getObjectId(req, res) {
       });
     }
 
-    // TODO: Add a call to renderService... not sure how to do this yet
-    
-    // This will change... should be returning the renderTree
-    res.json(lwGraph);
+    var headersOpt = {
+      "content-type": "application/json",
+    };
+
+    my_req = {
+      method: 'POST',
+      url: 'http://localhost:8081/render',
+      body: {
+        key: root_key,
+        graph: lw_graph
+      },
+      headers: headersOpt,
+      json: true
+    }
+
+    // TODO: Use the correct url
+    request.get('TODO/render', my_req)
+      .then((response) => {
+        // Returns a json dict. {metadata: , render_tree: }
+        res.json(response);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
 }
 
 /*
@@ -79,18 +102,19 @@ function getObjectId(req, res) {
   }
 */
 
-function putObjectId(req, res) {
+function editObjectId(req, res) {
   changesArray = req.body.changes;
   update = {}
   for (i = 0; i < changesArray.length; i++) {
     update[changesArray[i]["target"]] = [changesArray[i]["value"]]
   }
-  id = req.body.toChange
-  ProseObjectModel.findOneAndUpdate({id : id}, update).exec((err, object) => {
+  id = req.query.id
+  console.log(id)
+  ProseObjectModel.findByIdAndUpdate({_id : id}, update).exec((err, object) => {
     if (err) res.send(err);
 
     // write success!
-    res.send(200);
+    res.send(JSON.stringify(object));
   })
 }
 
@@ -104,10 +128,17 @@ function putObjectId(req, res) {
 function deleteObjectId(req, res) {
   toDelete = req.body.toDelete;
 
-  ProseObjectModel.findOneAndDelete({id : toDelete}).exec((err, object) => {
+  ProseObjectModel.findOneAndDelete({_id : toDelete}).exec((err, object) => {
     if (err) res.send(err);
 
     // delete success!
     res.send(200);
   })
+}
+
+module.exports = {
+  getObjects: getObjects,
+  getObjectId: getObjectId,
+  editObjectId: editObjectId,
+  deleteObjectId: deleteObjectId
 }

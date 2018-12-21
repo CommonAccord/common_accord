@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser')
+const fs = require("fs");
+
 
 app.get('/', function (req, res) {
   res.send('Hello World');
@@ -19,20 +21,25 @@ app.post('/render', function (req, res) {
   console.log("test")
   const key = req.body.key
   const graph = req.body.graph
-  console.log(req.body)
-  
+
   const spawn = require("child_process").spawn;
   // Need to figure out structure of tree to translate it to json
-  const pythonProcess = spawn('python', ["../render_algo/dummy.py",
+  const pythonProcess = spawn('python', ["../render_algo/ingress.py",
     key, graph]);
   
+  parsed = ""
+  
   pythonProcess.stdout.on('data', (data) => {
-    data = JSON.parse(data)
-    response = {
-      "metadata": data.metadata,
-      "render_tree": data.render_tree
-    }
-    res.json(response)
+    // in case it returns in multiple chunks bc buffer size
+    parsed = parsed + data.toString()
+    // data is a dictionary representing the rendered tree
+    // render_tree: {text: String (the variable name or the literal), metadata: {},
+    //   children: [render_tree]}
+  })
+
+  pythonProcess.on('exit', (code) => {
+    console.log(parsed)
+    res.json(JSON.parse(parsed))
   })
 })
 

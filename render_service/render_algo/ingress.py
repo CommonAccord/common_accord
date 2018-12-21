@@ -16,7 +16,10 @@ def main(argv):
     """
     root_node = Node.parse(" ".join(argv[1:]))
     tree = root_node.render(argv[0])
-    print(json.dumps(tree))
+    #print(json.dumps(tree))
+    sys.stdout.write(json.dumps(tree))
+    sys.stdout.flush()
+    sys.exit("100")
 
 if __name__ == "__main__":
     main(sys.argv[1:])

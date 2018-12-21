@@ -11,11 +11,11 @@ let ProseObjectSchema = new mongoose.Schema({
     key: String,
     proseObjectId: objectId
   }],
-  // Data, a json array of type [{key: , tokens: [str/int, str/int, ...]}]
-  data: [{
-    key: String, 
-    tokens: [String]
-  }],
+  // Data, a dictionary of type {key: , tokens: [str/int, str/int, ...]}
+  data: {
+    // map variable names to a list of tokens
+    type: Map, of: [String]
+  },
   // the id of the parent to allow us to simulate a file system for UX
   parent: String
 });

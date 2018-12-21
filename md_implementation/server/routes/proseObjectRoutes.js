@@ -9,7 +9,7 @@ module.exports = (router) => {
     .get(proseObjectCtrl.getObjects)
 
   router
-    .route('/object:id')
+    .route('/object/:id')
     .get(proseObjectCtrl.getObjectId)
     .post(proseObjectCtrl.editObjectId)
     .delete(proseObjectCtrl.deleteObjectId)

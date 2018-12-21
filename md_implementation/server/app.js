@@ -1,6 +1,6 @@
 /** require dependencies */
 const express = require("express")
-const routes = require('./routes/')
+const routes = require('./routes/proseObjectRoutes')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const bodyParser = require('body-parser')
@@ -32,7 +32,7 @@ app.use(bodyParser.json())
 app.use(helmet())
 //app.use('/static',express.static(path.join(__dirname,'static')))
 
-app.use('/api', router)
+app.use('', router)
 
 /** start server */
 app.listen(port, () => {
