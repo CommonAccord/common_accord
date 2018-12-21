@@ -1,8 +1,4 @@
-"""
-Core render algorithm wrapped in the class Graph
-"""
 import json
-# import RenderTree from render_tree
 
 class Node(object):
     """
@@ -16,7 +12,7 @@ class Node(object):
     # NOTE: This implementation requires python 3.6 or above because it assumes
     #       that dictionaries maintain the ordering of keys.
 
-    def __init__(self, edges, data, name):
+    def __init__(self, edges, data, id):
         """
         Subgraphs is an object with contains a list key, graph pairs
         dictionary is the direct keys
@@ -25,8 +21,8 @@ class Node(object):
         self.edges = edges
         # dict: string -> List<Tokens>
         self.data = data
-        # name used for distinguishing edges with the same names
-        self.name = name
+        # name used for distinguishing edges with the same ids
+        self.id = id
 
 
     def render(self, key):
@@ -45,9 +41,8 @@ class Node(object):
             for i, token in enumerate(reversed(tokens)):
                 subtree = {"text": token}
                 parts.insert(0, subtree)
-                if i % 2: # Variable
+                if i % 2: # Variable (we know because alternation always starts with a literal)
                     stack.append((metadata["path"], token, subtree))
-                    # subtree["text"] = "{" + subtree["text"] + "}"
         # When everything is done, return the root
         return root
 
@@ -73,12 +68,12 @@ class Node(object):
         best = ["Not Found: {" + var + "}"], "Error: not found"
 
         while stack:
-            node, mlen, possible_levels, path, names = stack.pop()
+            node, mlen, possible_levels, path, ids = stack.pop()
             still_possible = [l for l in possible_levels if l > best_level]
             for level in still_possible:
                 tokens = node.data.get(possible_matches[level][mlen:])
                 if tokens:
-                    best = tokens, {"path": path, "names": names}
+                    best = tokens, {"path": path, "ids": ids}
                     best_level = level
                     break
             # The following shortcut could come up for a perfect match
@@ -87,11 +82,11 @@ class Node(object):
             if best_level == number_of_levels:
                 break
             if still_possible:
-                node._expand(mlen, possible_matches, still_possible, visited, stack, path, names)
+                node._expand(mlen, possible_matches, still_possible, visited, stack, path, ids)
         return best
 
 
-    def _expand(self, mlen, possible_matches, possible_levels, visited, stack, path, names):
+    def _expand(self, mlen, possible_matches, possible_levels, visited, stack, path, ids):
         """
         When this helper function is called, we look at all the edges the 'self'
         node is connected to and filter the ones that are both matching the path
@@ -113,14 +108,14 @@ class Node(object):
                         # Mark it on the stack so we can deal with it later
                         new_possibilities.append(level)
             if new_possibilities:
-                stack.append((neighbor, tlen, new_possibilities, path + [edge], names + [neighbor.name]))
+                stack.append((neighbor, tlen, new_possibilities, path + [edge], ids + [neighbor.id]))
 
     # TODO: short-circuit comparison?
     def deep_equals(self, other_node):
         '''
-        Compares nodes for equality at all levels (not just name). Used for testing.
+        Compares nodes for equality at all levels (not just ids). Used for testing.
         '''
-        name_equals = other_node.name == self.name
+        name_equals = other_node.id == self.id
         data_equals = self.data == other_node.data
         refs_equals = True
 
@@ -165,7 +160,7 @@ class Node(object):
         graph = jstr["graph"]
         parsed = {}
         for name in graph:
-            parsed[name] = Node([], graph[name]["data"], name)
+            parsed[name] = Node([], graph[name]["data"], graph[name]["id"])
 
         for name in graph:
             for edge in graph[name]["edges"]:
@@ -177,7 +172,7 @@ class Node(object):
     def deep_to_string(self, indent=""):
         print(indent + "BEGIN NODE")
         indent += "  "
-        print(indent + "name: " + self.name)
+        print(indent + "id: " + self.id)
         print(indent + "data: " + json.dumps(self.data))
         print(indent + "edges: ")
         for e in self.edges:

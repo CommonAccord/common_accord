@@ -9,14 +9,14 @@ class TextSpan extends Component{
 
         this.state = {
             expanded:true,
-            editable:true
+            editable:false
         }
     }
 
     handleClick = (e) => {
-        // toggle the state of thi component
+        // toggle the state of the component
         this.setState({
-            editable: !this.state.editable,
+            //editable: !this.state.editable,
             expanded: !this.state.expanded
         });
     }
@@ -31,6 +31,7 @@ class TextSpan extends Component{
     renderChildren() {
         
         if(this.props.docTree.children){
+            
             const children = this.props.docTree.children.map( child => {
                 if (child.children) {
                     return <TextSpan docTree={child} ref={child.text}/> 
@@ -46,11 +47,11 @@ class TextSpan extends Component{
         }
     }
 
-    
+
     render(){
         if (this.state.expanded) {
             return (
-                <span title={this.props.docTree.text} id={this.props.docTree.text}
+                <span title={"Variable: " + this.props.docTree.text} id={this.props.docTree.text}
                 contentEditable={this.state.editable}>
 
                     {this.renderChildren()}
@@ -59,11 +60,9 @@ class TextSpan extends Component{
             );
         } else {
             return (
-                <span title={this.props.docTree.text} id={this.props.docTree.text}
-                contentEditable={this.state.editable} onDoubleClick={this.handleClick}>
-
-                   {this.props.docTree.text}
-
+                <span className="variable" title={this.props.docTree.text} id={this.props.docTree.text}
+                contentEditable={this.state.editable} onDoubleClick={this.handleClick}> 
+                {this.props.docTree.text}
                 </span>
             );
         }

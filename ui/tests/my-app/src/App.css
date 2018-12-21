@@ -1,3 +1,16 @@
+/*
+Color scheme:
+
+#4F71C3 lighter blue
+#695D96 darker purple
+
+#ECE9EF white with a bit of purple 
+
+#E8F3D5 light green
+
+*/
+
+
 .App {
   text-align: center;
 }
@@ -21,6 +34,31 @@
 .App-link {
   color: #61dafb;
 }
+
+.literal {
+
+}
+
+.variable:before {
+  content: '{';
+}
+
+.variable:after {
+  content: '}';
+}
+
+.literal:hover {
+  background-color:#ECE9EF; 
+}
+
+.variable{
+
+  color: #4F71C3;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold
+
+}
+
 
 @keyframes App-logo-spin {
   from {
