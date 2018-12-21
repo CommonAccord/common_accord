@@ -11,12 +11,16 @@ A node contains "data" and "edges", and has the following schema:
     "data": {
         "key_1": ["literal_1", "variable_1"],
         "key_2": ["literal_2"],
-        "key_3": ["literal_3", "variable_2", "literal_4" ]
+        "key_3": ["literal_3", "variable_2", "literal_4"]
     },
     "edges": [["prefix_1", "node_2"]]
 }
 
-The data entry is a dictionairy since all the keys are unique and have no priority, while the edges entry is an array with the first element being of the highest priority.
+The "data" entry maps to a dictionairy, since all the keys are unique, have no priority, and need to be searched easily when looking to see if a node contains 
+a variable to expand. 
+
+The "edges" field is an array. Each element in this array is a tuple, with the 
+first element of the tuple being the prefix and the second the unique name of another node. The "edges" array is orded in decreasing priority.
 
 The data is evaluated first, before looking at the edges field to see if the referenced maps might contain the value of a variable to be expanded. 
 
