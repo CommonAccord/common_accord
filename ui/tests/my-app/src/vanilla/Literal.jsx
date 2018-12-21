@@ -10,7 +10,7 @@ class TextSpan extends Component{
 
     render(){
       return (
-        <span title={this.props.text} id={this.props.text}
+        <span className="literal"
         contentEditable={this.props.editable} onDoubleClick={this.props.clickHandler}
         dangerouslySetInnerHTML={{ __html: this.props.text }} />
 

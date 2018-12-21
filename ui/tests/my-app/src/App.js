@@ -1,5 +1,6 @@
 import React from 'react'
 import TextSpan from './vanilla/TextSpan.jsx'
+import './App.css';
 
 const docTree = {text: 'Prose Description', 
   metadata: {path: [], names: []}, children: [
