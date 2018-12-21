@@ -1,20 +1,20 @@
-# common_accord
+# CommonAccord
 
 README
 
-# data structures used
+# Data Structures
 
 ## The node data structure
 A node contains "data" and "edges", and has the following schema:
 
-{
-    "data": {
-        "key_1": ["literal_1", "variable_1"],
-        "key_2": ["literal_2"],
-        "key_3": ["literal_3", "variable_2", "literal_4"]
-    },
-    "edges": [["prefix_1", "node_2"]]
-}
+        {
+        "data": {
+                "key_1": ["literal_1", "variable_1"],
+                "key_2": ["literal_2"],
+                "key_3": ["literal_3", "variable_2", "literal_4"]
+        },
+        "edges": [["prefix_1", "node_2"]]
+        }
 
 The "data" entry maps to a dictionairy, since all the keys are unique, have no priority, and need to be searched easily when looking to see if a node contains 
 a variable to expand. 
@@ -34,7 +34,7 @@ The outputted document, or "view" is a tree, that looks like this:
             metadata: {path: [edge path to where found], names: [vertex path ... ]},
             children: A list of Trees}
 
-Note: each leaf is a literal, which has no metadata or children fields.
+Note: each leaf is a literal, which has the same structure but no metadata or children.
 
 
 
